@@ -10,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { dispatch } = useUser(); 
+  const { dispatch } = useUser();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,9 +54,9 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left section (Login Form) */}
-      <div className="flex flex-col justify-center items-center w-1/2 bg-gray-100 p-10">
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 bg-gray-100 p-6 md:p-10">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
             <img
@@ -82,9 +82,11 @@ const Login = () => {
                     type="email"
                     required
                     value={email}
-                    placeholder={`your@email.com`}
+                    placeholder="your@email.com"
                     onChange={handleChange}
-                    className={`p-2 h-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${errors.email ? 'border-red-500' : ''}`}
+                    className={`p-2 h-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                      errors.email ? 'border-red-500' : ''
+                    }`}
                   />
                   {errors.email && <span className="text-red-500">{errors.email}</span>}
                 </div>
@@ -101,9 +103,11 @@ const Login = () => {
                     type="password"
                     required
                     value={password}
-                    placeholder='********'
+                    placeholder="********"
                     onChange={handleChange}
-                    className={`p-2 h-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${errors.password ? 'border-red-500' : ''}`}
+                    className={`p-2 h-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                      errors.password ? 'border-red-500' : ''
+                    }`}
                   />
                   {errors.password && <span className="text-red-500">{errors.password}</span>}
                 </div>
@@ -129,7 +133,8 @@ const Login = () => {
         </div>
       </div>
 
-      <div className="flex w-1/2 items-center  rounded-lg justify-center bg-indigo-600">
+      {/* Right section (Image) */}
+      <div className="hidden md:flex w-1/2 items-center justify-center bg-indigo-600">
         <img
           src="https://ideogram.ai/assets/image/lossless/response/UkWQ3IfgRuCOVC_PNRfvdg"
           alt="Right Section"

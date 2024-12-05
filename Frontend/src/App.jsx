@@ -13,6 +13,7 @@ import Profile from './pages/Profile/Profile';
 import Bookings from './pages/Bookings/Bookings';
 import Interests from './components/Interests/Interests';
 import AllVenues from './components/Venues/AllVenues';
+import BookingPage from './pages/BookingPage/BookingPage';
 
 function App() {
   return (
@@ -43,7 +44,8 @@ const MainContent = () => {
           <Route path="/profile" element={<Profile/>} />
           <Route path='/bookings' element={<Bookings />} />
           <Route path="/interests" element={<Interests />} />
-          <Route path="/venues" element={<AllVenues/>} />
+          <Route path="/venues" element={<AllVenues />} />
+          <Route path='/book/:activityName' element={<BookingPage/>}/>
         </Routes>
       </PageTransition>
     </main>

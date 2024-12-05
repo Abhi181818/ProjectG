@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
 import { Country, State, City } from 'country-state-city';
-import { auth, db, googleProvider } from '../../firebase'; // Import Firebase and Google Auth provider
+import { auth, db, googleProvider } from '../../firebase'; 
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { toast } from 'sonner';
 import { doc, setDoc } from 'firebase/firestore';
@@ -74,7 +74,6 @@ const Signup = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
       await setDoc(doc(db, 'users', user.uid), {
         name: user.displayName,
         email: user.email,
