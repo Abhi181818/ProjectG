@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner'; // For notifications
-import { auth } from '../firebase'; // Import the auth instance
+import { auth, googleProvider } from '../firebase'; // Import the auth and Google provider instance
 import { useUser } from '../context/userContext';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { FcGoogle } from 'react-icons/fc';
+import { Helmet } from 'react-helmet';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -53,8 +54,33 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const userData = result.user;
+
+      // Set the user in context
+      dispatch({ type: 'SET_USER', payload: userData });
+
+      toast.success('Logged in with Google', {
+        duration: 3000,
+      });
+      navigate('/');
+      console.log('Google user logged in:', userData);
+    } catch (error) {
+      toast.error(error.message, {
+        duration: 3000,
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
+       <Helmet>
+        <title>Ziplay : Login</title>
+        <meta name="description" content="description" />
+        <meta name="keywords" content="react, seo, optimization" />
+      </Helmet>
       {/* Left section (Login Form) */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 bg-gray-100 p-6 md:p-10">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -122,6 +148,16 @@ const Login = () => {
                 </button>
               </div>
             </form>
+
+            <div className="flex justify-center mt-4">
+            <button
+              onClick={handleGoogleLogin}
+              className="flex justify-center items-center rounded-full bg-white px-4 py-2 text-sm font-semibold leading-6 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <FcGoogle className="h-6 w-6 mr-2" /> 
+              <span>Sign In with Google</span>
+            </button>
+          </div>
 
             <p className="mt-10 text-center text-sm text-gray-500">
               Not a member?{' '}

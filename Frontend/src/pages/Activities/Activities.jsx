@@ -1,61 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { FaGlobe, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+import { FaCalendarAlt, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Helmet } from 'react-helmet';
-
-const AllVenues = () => {
-    const [venues, setVenues] = useState([]);
+const Activities = () => {
+    const [activities, setActivities] = useState([]);
     const [filter, setFilter] = useState('');
     const [sortOrder, setSortOrder] = useState('asc');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const location = localStorage.getItem('selectedCity');
 
-    const getVenues = async () => {
+    const getActivities = async () => {
         setLoading(true);
         setError(null);
         try {
-            const venuesRef = collection(db, 'venues');
-            const querySnapshot = await getDocs(venuesRef);
+            const activitiesRef = collection(db, 'activities');
+            const querySnapshot = await getDocs(activitiesRef);
             const data = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
             }));
+
             if (location) {
-                const filteredData = data.filter(venue =>
-                    venue.address.toLowerCase().includes(location.toLowerCase())
+                const filteredData = data.filter(activity =>
+                    activity.city && activity.city.toLowerCase().includes(location.toLowerCase())
                 );
-                setVenues(filteredData);
+                setActivities(filteredData);
             } else {
-                setVenues(data);
+                setActivities(data);
             }
         } catch (error) {
-            setError('Failed to load venues. Please try again.');
-            console.error('Error fetching venues:', error.message);
+            setError('Failed to load activities. Please try again.');
+            console.error('Error fetching activities:', error.message);
         } finally {
             setLoading(false);
         }
     };
 
+
     useEffect(() => {
-        getVenues();
+        getActivities();
     }, [location]);
 
-    const filteredVenues = venues
-        .filter(venue => venue.name.toLowerCase().includes(filter.toLowerCase()))
+    const filteredActivities = activities
+        .filter(activity => activity.title.toLowerCase().includes(filter.toLowerCase()))
         .sort((a, b) => {
             return sortOrder === 'asc'
-                ? a.name.localeCompare(b.name)
-                : b.name.localeCompare(a.name);
+                ? a.title.localeCompare(b.title)
+                : b.title.localeCompare(a.title);
         });
 
     return (
         <div className="container mx-auto px-4 py-8 mt-28">
-
             <Helmet>
-                <title>Ziplay : Venues</title>
+                <title>Ziplay : Activities</title>
                 <meta name="description" content="description" />
                 <meta name="keywords" content="react, seo, optimization" />
             </Helmet>
@@ -63,7 +63,7 @@ const AllVenues = () => {
             <div className="flex flex-col md:flex-row justify-between mb-4">
                 <input
                     type="text"
-                    placeholder="Search by venue name"
+                    placeholder="Search by activity"
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                     className="border border-gray-300 rounded-lg px-4 py-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -81,7 +81,7 @@ const AllVenues = () => {
             {/* Loading State */}
             {loading && (
                 <div className="text-center">
-                    <p className="text-xl text-gray-500">Loading venues...</p>
+                    <p className="text-xl text-gray-500">Loading activities...</p>
                 </div>
             )}
 
@@ -93,37 +93,37 @@ const AllVenues = () => {
             )}
 
             {/* No Data State */}
-            {!loading && !error && filteredVenues.length === 0 && (
+            {!loading && !error && filteredActivities.length === 0 && (
                 <div className="text-center text-gray-600">
-                    <p className="text-2xl font-bold mb-4">No venues found</p>
+                    <p className="text-2xl font-bold mb-4">No activities found</p>
                     <p>Try changing the search query or sorting order</p>
                 </div>
             )}
 
-            {/* Venues List */}
-            {!loading && !error && filteredVenues.length > 0 && (
+            {/* Activities List */}
+            {!loading && !error && filteredActivities.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredVenues.map((venue) => (
+                    {filteredActivities.map((activity) => (
                         <div
-                            key={venue.id}
+                            key={activity.id}
                             className="bg-white border rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 hover:bg-blue-50"
                         >
                             <img
-                                src={venue.imageUrl}
-                                alt={venue.name}
+                                src={activity.imageUrl}
+                                alt={activity.title}
                                 className="w-full h-48 object-cover"
                             />
                             <div className="p-6">
-                                <h2 className="text-2xl font-bold text-gray-800 mb-2">{venue.name}</h2>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-2">{activity.title}</h2>
                                 <p className="text-gray-600 mb-2">
-                                    <FaMapMarkerAlt className="inline mr-1" /> {venue.address}
+                                    <FaMapMarkerAlt className="inline mr-1" /> {activity.city}
                                 </p>
                                 <p className="text-gray-600 mb-2">
-                                    <FaClock className="inline mr-1" /> {venue.openingHours}
+                                    <FaClock className="inline mr-1" /> {activity.venueId.openingHours}
                                 </p>
-                                <p className="text-gray-700 mb-4">{venue.description}</p>
+                                <p className="text-gray-700 mb-4">{activity.description}</p>
                                 <Link
-                                    to={`/venues/${venue.slug}/${venue.id}`}
+                                    to={`/activities/${activity.slug}/${activity.id}`}
                                     className="inline-block bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-500 transition-colors mb-2"
                                 >
                                     Learn More
@@ -137,4 +137,4 @@ const AllVenues = () => {
     );
 };
 
-export default AllVenues;
+export default Activities;

@@ -102,7 +102,7 @@ const Profile = () => {
                             <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
                                 <img
                                     className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300"
-                                    src={userDetails.avatar || 'https://via.placeholder.com/150'} 
+                                    src={userDetails.avatar || 'https://via.placeholder.com/150'}
                                     alt="Avatar"
                                 />
                                 <div className="flex flex-col space-y-5 sm:ml-8">
@@ -112,9 +112,11 @@ const Profile = () => {
                                         onChange={handleAvatarChange}
                                         className="mb-4"
                                     />
-                                    <button type="button" className="py-3.5 px-7 text-base font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200">
+                                    {/* <button
+                                        className="py-3.5 px-7 text-base font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200"
+                                    >
                                         Change picture
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
 
@@ -181,32 +183,32 @@ const Profile = () => {
             </main>
 
             <div className="w-1/2 p-4 bg-gray-100 rounded-lg shadow-md">
-            <h3 className="text-lg font-bold mt-5">Interests</h3>
-            <div className="flex flex-wrap mt-4">
-                {interestsList.map((interest) => (
-                    <div key={interest} className={`flex items-center m-2 rounded-full border p-2 cursor-pointer transition-all duration-300 ${interests.includes(interest) ? 'bg-indigo-600 text-white' : 'bg-white text-gray-900 border-gray-300'}`} onClick={() => handleInterestChange(interest)}>
-                        {interests.includes(interest) ? (
-                            <>
-                                <span className="mr-2">{interest}</span>
-                                <FaTimes className="text-white" />
-                            </>
-                        ) : (
-                            <>
-                                <span className="mr-2">{interest}</span>
-                                <FaPlus className="text-indigo-600" />
-                            </>
-                        )}
-                    </div>
-                ))}
+                <h3 className="text-lg font-bold mt-5">Interests</h3>
+                <div className="flex flex-wrap mt-4">
+                    {interestsList.map((interest) => (
+                        <div key={interest} className={`flex items-center m-2 rounded-full border p-2 cursor-pointer transition-all duration-300 ${interests.includes(interest) ? 'bg-indigo-600 text-white' : 'bg-white text-gray-900 border-gray-300'}`} onClick={() => handleInterestChange(interest)}>
+                            {interests.includes(interest) ? (
+                                <>
+                                    <span className="mr-2">{interest}</span>
+                                    <FaTimes className="text-white" />
+                                </>
+                            ) : (
+                                <>
+                                    <span className="mr-2">{interest}</span>
+                                    <FaPlus className="text-indigo-600" />
+                                </>
+                            )}
+                        </div>
+                    ))}
+                </div>
+                <button
+                    type="button"
+                    onClick={saveChanges}
+                    className="mt-4 bg-indigo-600 text-white p-2 rounded transition-all duration-300 hover:bg-indigo-700"
+                >
+                    Save Interests
+                </button>
             </div>
-            <button
-                type="button"
-                onClick={saveChanges}
-                className="mt-4 bg-indigo-600 text-white p-2 rounded transition-all duration-300 hover:bg-indigo-700"
-            >
-                Save Interests
-            </button>
-        </div>
         </div>
     );
 }

@@ -5,7 +5,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline'; // Correct import for H
 const popularCities = [
   { name: 'Mumbai', icon: <FaMapMarkerAlt /> },
   { name: 'Delhi', icon: <FaMapMarkerAlt /> },
-  { name: 'Bengaluru', icon: <FaMapMarkerAlt /> },
+  { name: 'Bangalore', icon: <FaMapMarkerAlt /> },
   { name: 'Kolkata', icon: <FaMapMarkerAlt /> },
   { name: 'Chennai', icon: <FaMapMarkerAlt /> },
   { name: 'Hyderabad', icon: <FaMapMarkerAlt /> },

@@ -4,11 +4,11 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Typewriter from 'typewriter-effect';
 import { Link } from 'react-router-dom';
 import CityPopup from '../../components/CityPopup/CityPopup'; // Import the new CityPopup component
-
+import { Helmet } from 'react-helmet';
 const Home = () => {
   const images = [
     "https://mdbootstrap.com/img/Photos/Slides/img%20(130).jpg",
-    "https://mdbootstrap.com/img/Photos/Slides/img%20(130).jpg", 
+    "https://mdbootstrap.com/img/Photos/Slides/img%20(130).jpg",
     "https://mdbootstrap.com/img/Photos/Slides/img%20(130).jpg",
   ];
 
@@ -18,7 +18,7 @@ const Home = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000); 
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [images.length]);
@@ -40,6 +40,11 @@ const Home = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Ziplay : Home</title>
+        <meta name="description" content="description" />
+        <meta name="keywords" content="react, seo, optimization" />
+      </Helmet>
       <div className="relative overflow-hidden bg-white">
         <div className="pt-16">
           <div className="relative mx-auto max-w-7xl px-4 sm:relative sm:px-6 lg:px-8">
@@ -119,8 +124,8 @@ const Home = () => {
         </div>
         <FeaturedActivities />
       </div>
-      
-      {showPopup && <CityPopup onClose={() => setShowPopup(false)} />} 
+
+      {showPopup && <CityPopup onClose={() => setShowPopup(false)} />}
     </div>
   );
 };

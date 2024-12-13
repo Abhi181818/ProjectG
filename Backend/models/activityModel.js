@@ -8,6 +8,10 @@ const activitySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  price: {
+    type: Number,
+    required: true,
+  },
   imageUrl: {
     type: String,
     default: 'https://via.placeholder.com/300x200', 

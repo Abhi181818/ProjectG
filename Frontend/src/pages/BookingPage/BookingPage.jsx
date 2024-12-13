@@ -10,10 +10,9 @@ const BookingPage = () => {
 
 
 
-///edit this api 
       const fetchVenues = async () => {
       try {
-        const response = await fetch(`/api/venues?activity=${activityName}`);
+        const response = await fetch(`${import.meta.env.VITE_API_KEY}/api/venues?activity=${activityName}`);
         const data = await response.json();
         setVenues(data);
         setLoading(false);
@@ -41,7 +40,7 @@ const BookingPage = () => {
               <div key={index} className="bg-slate-500 rounded-lg p-6 shadow-lg flex flex-col">
                 <h3 className="text-xl font-semibold text-white">{venue.name}</h3>
                 <p className="mt-2 text-white flex-grow">{venue.description}</p>
-                <p className="mt-2 text-white">Location: {venue.location}</p>
+                <p className="mt-2 text-white">Location: {venue.address}</p>
                 <div className="mt-4">
                   <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-transform w-full">
                     Book Now

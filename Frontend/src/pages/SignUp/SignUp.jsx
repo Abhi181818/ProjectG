@@ -6,6 +6,7 @@ import { auth, db, googleProvider } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { toast } from 'sonner';
 import { doc, setDoc } from 'firebase/firestore';
+import { Helmet } from 'react-helmet';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -96,6 +97,11 @@ const Signup = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
+       <Helmet>
+                <title>Ziplay : Signup</title>
+                <meta name="description" content="description" />
+                <meta name="keywords" content="react, seo, optimization" />
+            </Helmet>
       <div className="hidden lg:flex w-1/2 bg-cover rounded-lg bg-center" style={{ backgroundImage: 'url(https://ideogram.ai/assets/image/lossless/response/DfAAJEvoSs6fS0VrkxVoaA)' }}>
       </div>
 
