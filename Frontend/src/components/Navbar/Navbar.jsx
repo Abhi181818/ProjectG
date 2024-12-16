@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Disclosure, DisclosurePanel, Menu, Transition } from '@headlessui/react';
+import { Disclosure, DisclosurePanel, Menu, MenuItem,Transition } from '@headlessui/react';
 import {
   Bars3Icon,
   XMarkIcon,
@@ -59,7 +59,6 @@ export default function Navbar() {
   const handleChangeCity = () => setShowPopup(true);
 
   useEffect(() => {
-
     const logoRef = ref(storage, 'cartLogo/logo.png');
     getDownloadURL(logoRef)
       .then((url) => {
@@ -78,9 +77,9 @@ export default function Navbar() {
     <>
       <Disclosure
         as="nav"
-        className={`fixed top-0 z-50 w-full transition-all ${isScrolled
-          ? 'bg-slate-700 bg-opacity-70 backdrop-blur-md shadow-md'
-          : 'bg-slate-700'
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled
+            ? 'bg-gradient-to-r from-slate-800 to-slate-700 bg-opacity-90 backdrop-blur-lg shadow-2xl'
+            : 'bg-gradient-to-r from-slate-900 to-slate-800'
           }`}
       >
         {({ open }) => (
@@ -89,7 +88,7 @@ export default function Navbar() {
               <div className="flex h-16 items-center justify-between">
                 {/* Mobile menu button */}
                 <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                  <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-slate-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                  <Disclosure.Button className="inline-flex items-center justify-center rounded-full p-2 text-gray-300 hover:bg-slate-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white transition-all duration-200">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
@@ -104,22 +103,22 @@ export default function Navbar() {
                     <img
                       alt="Your Company"
                       src="https://banner2.cleanpng.com/20180604/buh/aa9l5rk2z.webp"
-                      className="h-8 w-auto"
+                      className="h-10 w-auto rounded-full transition-transform hover:scale-110"
                     />
                   </div>
 
                   {/* Desktop Menu */}
                   <div className="hidden sm:ml-6 sm:block">
-                    <div className="flex">
+                    <div className="flex space-x-2">
                       {navigation.map((item) => (
                         <Link
                           key={item.name}
                           to={item.href}
                           className={classNames(
                             location.pathname === item.href
-                              ? 'bg-slate-800 text-white'
-                              : 'text-gray-300 hover:bg-slate-600 hover:text-white hover:scale-110 transition-transform',
-                            'rounded-md px-3 py-2 text-lg font-bold'
+                              ? 'bg-slate-700 text-white'
+                              : 'text-gray-300 hover:bg-slate-700 hover:text-white',
+                            'rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ease-in-out transform hover:scale-105'
                           )}
                         >
                           {item.name}
@@ -132,120 +131,118 @@ export default function Navbar() {
                 {/* Right Section */}
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   {/* Location */}
-                  <div className="hidden sm:flex items-center text-gray-300">
-                    <MapPinIcon className="h-6 w-6 mr-1" aria-hidden="true" />
-                    <span className="text-lg">{storedCity}</span>
+                  <div className="hidden sm:flex items-center text-gray-300 mr-3">
+                    <MapPinIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+                    <span className="text-sm font-medium">{storedCity}</span>
                     <button
                       onClick={handleChangeCity}
-                      className="ml-2 text-sm text-blue-400 hover:underline"
+                      className="ml-2 text-xs text-blue-400 hover:text-blue-300 transition-colors"
                     >
                       Change
                     </button>
                   </div>
 
                   {/* Notifications */}
-                  <button className="relative rounded-full bg-slate-700 p-1 text-gray-400 hover:text-white focus:outline-none">
+                  <button className="relative rounded-full p-2 text-gray-300 hover:bg-slate-700 hover:text-white focus:outline-none transition-all duration-200 mr-2">
                     <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
+                    <BellIcon className="h-5 w-5" aria-hidden="true" />
                   </button>
 
                   {/* Cart */}
                   <button
                     onClick={openCart}
-                    className="ml-3 relative rounded-full bg-slate-700 p-1 text-gray-400 hover:text-white focus:outline-none"
+                    className="relative rounded-full p-2 text-gray-300 hover:bg-slate-700 hover:text-white focus:outline-none transition-all duration-200"
                   >
                     <span className="sr-only">View cart</span>
-                    <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
-                    {/* <img src={logoUrl} alt="Cart" className="h-9 w-9" /> */}
+                    <ShoppingCartIcon className="h-5 w-5" aria-hidden="true" />
                   </button>
 
                   {state.user ? (
-                    <Menu as="div" className="relative">
-                      <div>
-                        <Menu.Button className="flex items-center focus:outline-none">
-                          <span className="sr-only">Open user menu</span>
-                          <img
-                            src={state.user.avatar}
-                            alt="User"
-                            className="h-10 w-10 rounded-full ring-2 ring-indigo-500 ring-opacity-50 hover:ring-opacity-80 transition-all duration-300 ease-in-out"
-                          />
-                        </Menu.Button>
-                      </div>
-
-                      <Transition
-                        as={React.Fragment}
-                        enter="transition ease-out duration-100"
-                        enterFrom="opacity-0 scale-95"
-                        enterTo="opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="opacity-100 scale-100"
-                        leaveTo="opacity-0 scale-95"
-                      >
-                        <Menu.Items className="absolute right-0 z-50 mt-3 w-60 origin-top-right rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden">
-                          <div className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-blue-50 border-b">
-                            <p className="text-sm font-medium text-gray-900">{state.user.name}</p>
-                            <p className="text-xs text-gray-500 truncate">{state.user.email}</p>
-                          </div>
-
-                          <div className="py-1">
-                            <Menu.Item>
-                              {({ active }) => (
-                                <Link
-                                  to="/profile"
-                                  className={`
-                                  ${active ? 'bg-gray-100 text-indigo-800' : 'text-gray-700'}
+                    <Menu as="div" className="relative ml-3">
+                    <div>
+                      <Menu.Button className="flex items-center focus:outline-none">
+                        <span className="sr-only">Open user menu</span>
+                        <img
+                          src={state.user.avatar}
+                          alt="User"
+                          className="h-9 w-9 rounded-full ring-2 ring-blue-500 ring-opacity-50 hover:ring-opacity-80 transition-all duration-300 ease-in-out"
+                        />
+                      </Menu.Button>
+                    </div>
+                
+                    <Transition
+                      as={React.Fragment}
+                      enter="transition transform ease-out duration-300"
+                      enterFrom="opacity-0 scale-90 -translate-y-4"
+                      enterTo="opacity-100 scale-100 translate-y-0"
+                      leave="transition transform ease-in duration-200"
+                      leaveFrom="opacity-100 scale-100 translate-y-0"
+                      leaveTo="opacity-0 scale-90 translate-y-4"
+                    >
+                      <Menu.Items className="absolute right-0 z-50 mt-3 w-64 origin-top-right rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden animate-subtle-bounce">
+                        <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                          <p className="text-sm font-semibold text-gray-900">{state.user.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{state.user.email}</p>
+                        </div>
+                
+                        <div className="py-1">
+                          <MenuItem>
+                            {({ active }) => (
+                              <Link
+                                to="/profile"
+                                className={`
+                                  ${active ? 'bg-blue-50 text-blue-800' : 'text-gray-700'}
                                   flex items-center px-4 py-2 text-sm transition-colors duration-200
                                 `}
-                                >
-                                  <UserIcon className="h-5 w-5 mr-3 text-indigo-500" />
-                                  Profile
-                                </Link>
-                              )}
-                            </Menu.Item>
-
-                            <Menu.Item>
-                              {({ active }) => (
-                                <Link
-                                  to="/settings"
-                                  className={`
-                                  ${active ? 'bg-gray-100 text-indigo-800' : 'text-gray-700'}
+                              >
+                                <UserIcon className="h-5 w-5 mr-3 text-blue-500" />
+                                Profile
+                              </Link>
+                            )}
+                          </MenuItem>
+                
+                          <Menu.Item>
+                            {({ active }) => (
+                              <Link
+                                to="/settings"
+                                className={`
+                                  ${active ? 'bg-blue-50 text-blue-800' : 'text-gray-700'}
                                   flex items-center px-4 py-2 text-sm transition-colors duration-200
                                 `}
-                                >
-                                  <CogIcon className="h-5 w-5 mr-3 text-indigo-500" />
-                                  Settings
-                                </Link>
-                              )}
-                            </Menu.Item>
-
-                            <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  onClick={handleLogout}
-                                  className={`
+                              >
+                                <CogIcon className="h-5 w-5 mr-3 text-blue-500" />
+                                Settings
+                              </Link>
+                            )}
+                          </Menu.Item>
+                
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                onClick={handleLogout}
+                                className={`
                                   ${active ? 'bg-red-50 text-red-800' : 'text-gray-700'}
                                   flex items-center w-full px-4 py-2 text-sm text-left transition-colors duration-200
                                 `}
-                                >
-                                  <CiLogout className="h-5 w-5 mr-3 text-red-500" />
-
-                                  Logout
-                                </button>
-                              )}
-                            </Menu.Item>
-                          </div>
-                        </Menu.Items>
-                      </Transition>
-                    </Menu>
+                              >
+                                <CiLogout className="h-5 w-5 mr-3 text-red-500" />
+                                Logout
+                              </button>
+                            )}
+                          </Menu.Item>
+                        </div>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
                   ) : (
-                    <div className="ml-3">
+                    <div className="flex items-center space-x-2">
                       <Link to="/login">
-                        <button className="px-4 py-2 text-lg text-white bg-slate-600 rounded hover:bg-slate-500 font-bold">
+                        <button className="px-3 py-1.5 text-sm text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors">
                           Login
                         </button>
                       </Link>
                       <Link to="/signup">
-                        <button className="ml-3 px-4 py-2 text-lg text-white bg-slate-600 rounded hover:bg-slate-500 font-bold">
+                        <button className="px-3 py-1.5 text-sm text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition-colors">
                           Signup
                         </button>
                       </Link>
@@ -254,7 +251,7 @@ export default function Navbar() {
                 </div>
               </div>
             </div>
-            <DisclosurePanel className="sm:hidden">
+            <DisclosurePanel className="sm:hidden bg-slate-800">
               <div className="space-y-1 px-2 pb-3 pt-2">
                 {navigation.map((item) => (
                   <Link
@@ -262,9 +259,9 @@ export default function Navbar() {
                     to={item.href}
                     className={classNames(
                       location.pathname === item.href
-                        ? 'bg-slate-800 text-white'
-                        : 'text-gray-300 hover:bg-slate-600 hover:text-white',
-                      'block rounded-md px-3 py-2 text-base font-medium'
+                        ? 'bg-slate-700 text-white'
+                        : 'text-gray-300 hover:bg-slate-700 hover:text-white',
+                      'block rounded-md px-3 py-2 text-base font-medium transition-colors'
                     )}
                   >
                     {item.name}

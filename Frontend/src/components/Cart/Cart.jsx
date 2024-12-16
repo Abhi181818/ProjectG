@@ -4,8 +4,9 @@ import { XMarkIcon, PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 import { doc, getDoc, updateDoc, collection, addDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import { toast } from "sonner";
+import { Trash2, PlusCircle, MinusCircle, X } from "lucide-react";
 
-const Cart = ({ isOpen, closeCart }) => {
+const Cart = ({ isOpen, onClose }) => {
   const [cartItems, setCartItems] = useState([]);
   const [activities, setActivities] = useState([]);
   const user = auth.currentUser;
@@ -100,6 +101,7 @@ const Cart = ({ isOpen, closeCart }) => {
     0
   );
 
+
   // Razorpay Payment Integration
   const handleRazorpayPayment = async () => {
     if (!window.Razorpay) {
@@ -155,7 +157,7 @@ const Cart = ({ isOpen, closeCart }) => {
             await updateCartInFirestore([]);
 
             toast.success("Payment successful! Booking saved.");
-            closeCart(); // Close the cart after successful payment
+            onClose(); // Close the cart after successful payment
           } catch (error) {
             console.error("Error saving booking to Firestore:", error.message);
             toast.error("Payment successful, but booking save failed");
@@ -191,83 +193,109 @@ const Cart = ({ isOpen, closeCart }) => {
 
   return (
     <div
-      onClick={closeCart}
-      className={`fixed inset-0 ${isOpen ? 'block' : 'hidden'}`}
-      style={{ zIndex: 100 }}
+    onClick={onClose}
+    className={`fixed inset-0 bg-black bg-opacity-30 ${isOpen ? 'block' : 'hidden'}`}
+    style={{ zIndex: 100 }}
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className={`fixed inset-y-0 right-0 transform transition-transform duration-300 
+        ${isOpen ? "translate-x-0" : "translate-x-full"} 
+        bg-white shadow-2xl w-[450px] h-full overflow-hidden z-50`}
     >
-      <div
-        onClick={handleCartClick}
-        className={`fixed inset-y-0 right-0 transform transition-transform 
-          ${isOpen ? "translate-x-0" : "translate-x-full"} 
-          bg-gray-100 shadow-lg w-80 p-4 z-50 opacity-90`}
-      >
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-bold">Cart</h2>
-          <button onClick={closeCart} className="text-gray-500 hover:text-gray-800">
-            <span className="sr-only">Close cart</span>
-            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-          </button>
-        </div>
+      <div className="bg-slate-700 text-white p-6 flex justify-between items-center h-16">
+        <h2 className="text-3xl font-bold">Your Lobby</h2>
+        <button 
+          onClick={()=>onClose} 
+          className="text-white hover:bg-blue-700 p-2 rounded-full transition-colors"
+        >
+          <X size={24} />
+        </button>
+      </div>
 
-        <div className="mt-4">
-          {activities.length > 0 ? (
-            activities.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center border-b py-2 hover:scale-105 transition-transform"
-              >
+      <div className="p-6 overflow-y-auto h-[calc(100vh-250px)]">
+        {activities.length === 0 ? (
+          <div className="text-center text-gray-500 py-12">
+            <p className="text-2xl mb-4">Your lobby is empty</p>
+            <p>Explore our game venues and start booking!</p>
+          </div>
+        ) : (
+          activities.map((item) => (
+            <div 
+              key={item.id} 
+              className="flex items-center justify-between border-b py-4 hover:bg-blue-50 transition-colors"
+            >
+              <div className="flex items-center space-x-4">
                 <img
                   src={item.imageUrl}
                   alt={item.title}
-                  className="h-16 w-16 rounded mr-4"
+                  className="h-20 w-20 rounded-lg object-cover"
                 />
-                <div className="flex-grow">
-                  <h3 className="font-medium">{item.title}</h3>
-                  <p className="text-gray-600">Price: ₹{item.price}</p>
-                  <div className="flex items-center mt-1">
-                    <button
-                      onClick={() => handleDecrease(item.id)}
-                      className="text-gray-500 hover:text-gray-800"
-                    >
-                      <MinusIcon className="h-4 w-4" />
-                    </button>
-                    <span className="mx-2">{item.quantity}</span>
-                    <button
-                      onClick={() => handleIncrease(item.id)}
-                      className="text-gray-500 hover:text-gray-800"
-                    >
-                      <PlusIcon className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleRemove(item.id)}
-                      className="ml-4 text-red-500 hover:text-red-800"
-                    >
-                      Remove
-                    </button>
-                  </div>
+                
+                <div>
+                  <h3 className="font-bold text-xl">{item.title}</h3>
+                  <p className="text-gray-600">₹{item.price} per session</p>
                 </div>
-                <span className="ml-4">
-                  ₹{(item.price * item.quantity).toFixed(2)}
-                </span>
               </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-600">Your cart is empty</p>
-          )}
-        </div>
-
-        <div className="mt-4">
-          <h3 className="font-bold">Total: ₹{totalAmount.toFixed(2)}</h3>
-          <button
+              
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center border rounded-full">
+                  <button 
+                    onClick={() => handleDecrease(item.id)}
+                    className="p-2 hover:bg-blue-100 rounded-l-full"
+                  >
+                    <MinusCircle size={20} className="text-blue-600" />
+                  </button>
+                  <span className="px-4 font-bold">{item.quantity}</span>
+                  <button 
+                    onClick={() => handleIncrease(item.id)}
+                    className="p-2 hover:bg-blue-100 rounded-r-full"
+                  >
+                    <PlusCircle size={20} className="text-blue-600" />
+                  </button>
+                </div>
+                
+                <div className="text-right w-24">
+                  <p className="font-bold">₹{(item.price * item.quantity).toFixed(2)}</p>
+                </div>
+                
+                <button 
+                  onClick={() => handleRemove(item.id)}
+                  className="text-red-500 hover:bg-red-50 p-2 rounded-full"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      
+      {activities.length > 0 && (
+        <div className="p-6 border-t">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <p className="text-xl font-bold">Total:</p>
+              <p className="text-gray-600">Includes all taxes and fees</p>
+            </div>
+            <div className="text-right">
+              <p className="text-3xl font-extrabold text-blue-700">
+                ₹{totalAmount.toFixed(2)}
+              </p>
+            </div>
+          </div>
+          
+          <button 
             onClick={handleRazorpayPayment}
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4 w-full"
+            className="w-full bg-green-500 text-white px-8 py-3 rounded-full hover:bg-green-600 transition-colors"
             disabled={activities.length === 0}
           >
             Pay with Razorpay
           </button>
         </div>
-      </div>
+      )}
     </div>
+  </div>
   );
 };
 

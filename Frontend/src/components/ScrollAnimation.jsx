@@ -1,34 +1,76 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import { motion, useInView, useAnimation } from 'framer-motion';
 
-const ScrollAnimation = ({ children, threshold = 0.1 }) => {
-  const [isVisible, setIsVisible] = React.useState(false);
-  const ref = React.useRef(null);
+// Professional scroll reveal component
+const ScrollReveal = ({
+  children,
+  direction = 'up',
+  delay = 0,
+  duration = 0.6,
+  className = '',
+  threshold = 0.2
+}) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: threshold });
+  const mainControls = useAnimation();
 
-  const handleScroll = () => {
-    const { current } = ref;
-    if (current) {
-      const rect = current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * threshold;
-      setIsVisible(isInView);
+  // Variant definitions with professional, subtle animations
+  const variants = {
+    hidden: {
+      opacity: 0,
+      ...(direction === 'up' && { y: 50 }),
+      ...(direction === 'down' && { y: -50 }),
+      ...(direction === 'left' && { x: 50 }),
+      ...(direction === 'right' && { x: -50 })
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      x: 0,
+      transition: {
+        duration: duration,
+        ease: [0.4, 0, 0.2, 1], // Elegant cubic bezier curve
+        delay: delay
+      }
     }
   };
 
-  React.useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  useEffect(() => {
+    if (isInView) {
+      mainControls.start('visible');
+    }
+  }, [isInView, mainControls]);
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-      transition={{ duration: 0.5 }}
-    >
-      {children}
-    </motion.div>
+    <div ref={ref} className={`scroll-reveal-wrapper ${className}`}>
+      <motion.div
+        variants={variants}
+        initial="hidden"
+        animate={mainControls}
+        className="w-full"
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 };
 
-export default ScrollAnimation;
+// Scroll reveal section component for easy implementation
+const ScrollRevealSection = ({
+  children,
+  className = '',
+  scrollRevealProps = {}
+}) => {
+  return (
+    <ScrollReveal
+      {...scrollRevealProps}
+      className={`py-4 ${className}`}
+    >
+      <div className="container mx-auto px-4">
+        {children}
+      </div>
+    </ScrollReveal>
+  );
+};
+
+export { ScrollReveal, ScrollRevealSection };

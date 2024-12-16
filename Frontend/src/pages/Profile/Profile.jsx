@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../../context/userContext';
-import { db, storage } from '../../firebase'; // Ensure you have your Firestore and Storage setup
+import { db, storage } from '../../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'sonner';
-import { FaPlus, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaTimes, FaUpload, FaSave } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const Profile = () => {
     const { state } = useUser();
@@ -17,10 +18,10 @@ const Profile = () => {
         city: '',
         profession: '',
         bio: '',
-        avatar: '', // Added avatar field
+        avatar: '',
     });
     const [interests, setInterests] = useState([]);
-    const [avatarFile, setAvatarFile] = useState(null); // File state for the avatar
+    const [avatarFile, setAvatarFile] = useState(null);
 
     const interestsList = [
         'Classic Arcade Games',
@@ -42,7 +43,7 @@ const Profile = () => {
                 state: state.user.state || '',
                 city: state.user.city || '',
                 bio: state.user.bio || '',
-                avatar: state.user.avatar || '', // Load avatar
+                avatar: state.user.avatar || '',
             });
             setInterests(state.user.interests || []);
         }
@@ -93,123 +94,131 @@ const Profile = () => {
     };
 
     return (
-        <div className="bg-white w-full flex flex-col md:flex-row gap-5 px-3 md:px-16 lg:px-28 text-[#161931] mt-12">
-            <main className="w-1/2 bg-gray-100 min-h-screen py-1 md:w-2/3 lg:w-3/4">
-                <div className="p-2 md:p-4">
-                    <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
-                        <h2 className="pl-6 text-2xl font-bold sm:text-xl">Public Profile</h2>
-                        <div className="grid max-w-2xl mx-auto mt-8">
-                            <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
-                                <img
-                                    className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300"
-                                    src={userDetails.avatar || 'https://via.placeholder.com/150'}
-                                    alt="Avatar"
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="min-h-screen bg-gradient-to-br from-indigo-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8"
+        >
+            <div className="max-w-7xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
+                <div className="grid md:grid-cols-3 gap-8 p-8">
+                    {/* Profile Image Section */}
+                    <motion.div 
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className="flex flex-col items-center justify-center space-y-6 bg-indigo-50 p-6 rounded-2xl"
+                    >
+                        <div className="relative">
+                            <img
+                                className="w-48 h-48 rounded-full object-cover border-4 border-indigo-200 shadow-lg"
+                                src={userDetails.avatar || 'https://via.placeholder.com/150'}
+                                alt="Avatar"
+                            />
+                            <label className="absolute bottom-0 right-0 bg-indigo-600 text-white p-3 rounded-full cursor-pointer hover:bg-indigo-700 transition-colors">
+                                <FaUpload />
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleAvatarChange}
+                                    className="hidden"
                                 />
-                                <div className="flex flex-col space-y-5 sm:ml-8">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleAvatarChange}
-                                        className="mb-4"
-                                    />
-                                    {/* <button
-                                        className="py-3.5 px-7 text-base font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200"
-                                    >
-                                        Change picture
-                                    </button> */}
-                                </div>
+                            </label>
+                        </div>
+                        <p className="text-xl font-semibold text-indigo-800">{userDetails.name || 'User Name'}</p>
+                    </motion.div>
+
+                    {/* Personal Details Section */}
+                    <motion.div 
+                        initial={{ x: -50, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="md:col-span-2 space-y-6"
+                    >
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-indigo-700 font-medium mb-2">Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    className="w-full px-4 py-2 border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-400 transition-all"
+                                    placeholder="Your full name"
+                                    value={userDetails.name}
+                                    onChange={handleChange}
+                                />
                             </div>
-
-                            <div className="items-center mt-8 sm:mt-14 text-[#202142]">
-                                <div className="flex flex-col items-center w-full mb-2 space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-6">
-                                    <div className="w-full">
-                                        <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-indigo-900">Your  name</label>
-                                        <input
-                                            type="text"
-                                            id="first_name"
-                                            name="name"
-                                            className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                                            placeholder="Your first name"
-                                            value={userDetails.name}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="mb-2 sm:mb-6">
-                                    <label htmlFor="email" className="block mb-2 text-sm font-medium text-indigo-900">Your email</label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                                        placeholder="your.email@mail.com"
-                                        value={userDetails.email}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                {/* Country */}
-
-                                <div className="mb-2 sm:mb-6">
-                                    <label htmlFor="phone" className="block mb-2 text-sm font-medium text-indigo-900">Your phone number</label>
-                                    <input
-
-                                        type="text"
-                                        id="phone"
-                                        name="phone"
-                                        className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                                        placeholder="Your phone number"
-                                        value={userDetails.phone}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="flex justify-end">
-                                    <button
-                                        type="button"
-                                        onClick={saveChanges}
-                                        className="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                                    >
-                                        Save
-                                    </button>
-                                </div>
+                            <div>
+                                <label className="block text-indigo-700 font-medium mb-2">Email</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    className="w-full px-4 py-2 border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-400 transition-all"
+                                    placeholder="your.email@example.com"
+                                    value={userDetails.email}
+                                    onChange={handleChange}
+                                />
                             </div>
                         </div>
-                    </div>
-                </div>
-            </main>
-
-            <div className="w-1/2 p-4 bg-gray-100 rounded-lg shadow-md">
-                <h3 className="text-lg font-bold mt-5">Interests</h3>
-                <div className="flex flex-wrap mt-4">
-                    {interestsList.map((interest) => (
-                        <div key={interest} className={`flex items-center m-2 rounded-full border p-2 cursor-pointer transition-all duration-300 ${interests.includes(interest) ? 'bg-indigo-600 text-white' : 'bg-white text-gray-900 border-gray-300'}`} onClick={() => handleInterestChange(interest)}>
-                            {interests.includes(interest) ? (
-                                <>
-                                    <span className="mr-2">{interest}</span>
-                                    <FaTimes className="text-white" />
-                                </>
-                            ) : (
-                                <>
-                                    <span className="mr-2">{interest}</span>
-                                    <FaPlus className="text-indigo-600" />
-                                </>
-                            )}
+                        <div>
+                            <label className="block text-indigo-700 font-medium mb-2">Phone Number</label>
+                            <input
+                                type="text"
+                                name="phone"
+                                className="w-full px-4 py-2 border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-400 transition-all"
+                                placeholder="Your phone number"
+                                value={userDetails.phone}
+                                onChange={handleChange}
+                            />
                         </div>
-                    ))}
+                    </motion.div>
                 </div>
-                <button
-                    type="button"
-                    onClick={saveChanges}
-                    className="mt-4 bg-indigo-600 text-white p-2 rounded transition-all duration-300 hover:bg-indigo-700"
+
+                {/* Interests Section */}
+                <motion.div 
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-indigo-50 p-8 rounded-b-2xl"
                 >
-                    Save Interests
-                </button>
+                    <h3 className="text-2xl font-bold text-indigo-800 mb-6">Your Interests</h3>
+                    <div className="flex flex-wrap gap-4">
+                        {interestsList.map((interest) => (
+                            <motion.div 
+                                key={interest}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className={`flex items-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 ${
+                                    interests.includes(interest) 
+                                    ? 'bg-indigo-600 text-white' 
+                                    : 'bg-white text-indigo-600 border border-indigo-200'
+                                }`}
+                                onClick={() => handleInterestChange(interest)}
+                            >
+                                {interests.includes(interest) ? (
+                                    <>
+                                        <span className="mr-2">{interest}</span>
+                                        <FaTimes />
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="mr-2">{interest}</span>
+                                        <FaPlus />
+                                    </>
+                                )}
+                            </motion.div>
+                        ))}
+                    </div>
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={saveChanges}
+                        className="mt-6 flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                    >
+                        <FaSave /> Save Changes
+                    </motion.button>
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
     );
 }
 
