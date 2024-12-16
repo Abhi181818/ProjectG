@@ -123,7 +123,7 @@ const Cart = ({ isOpen, onClose }) => {
       }
 
       const options = {
-        key: "rzp_test_mat6Yl4N53bNuY", // Replace with your Razorpay Key ID
+        key: "rzp_test_2dGyiOUDkgEtw2", // Replace with your Razorpay Key ID
         amount: totalAmount * 100,
         currency: "INR",
         name: "Ziplay",
@@ -193,109 +193,109 @@ const Cart = ({ isOpen, onClose }) => {
 
   return (
     <div
-    onClick={onClose}
-    className={`fixed inset-0 bg-black bg-opacity-30 ${isOpen ? 'block' : 'hidden'}`}
-    style={{ zIndex: 100 }}
-  >
-    <div
-      onClick={(e) => e.stopPropagation()}
-      className={`fixed inset-y-0 right-0 transform transition-transform duration-300 
+      onClick={onClose}
+      className={`fixed inset-0 bg-black bg-opacity-30 ${isOpen ? 'block' : 'hidden'}`}
+      style={{ zIndex: 100 }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`fixed inset-y-0 right-0 transform transition-transform duration-300 
         ${isOpen ? "translate-x-0" : "translate-x-full"} 
         bg-white shadow-2xl w-[450px] h-full overflow-hidden z-50`}
-    >
-      <div className="bg-slate-700 text-white p-6 flex justify-between items-center h-16">
-        <h2 className="text-3xl font-bold">Your Lobby</h2>
-        <button 
-          onClick={()=>onClose} 
-          className="text-white hover:bg-blue-700 p-2 rounded-full transition-colors"
-        >
-          <X size={24} />
-        </button>
-      </div>
-
-      <div className="p-6 overflow-y-auto h-[calc(100vh-250px)]">
-        {activities.length === 0 ? (
-          <div className="text-center text-gray-500 py-12">
-            <p className="text-2xl mb-4">Your lobby is empty</p>
-            <p>Explore our game venues and start booking!</p>
-          </div>
-        ) : (
-          activities.map((item) => (
-            <div 
-              key={item.id} 
-              className="flex items-center justify-between border-b py-4 hover:bg-blue-50 transition-colors"
-            >
-              <div className="flex items-center space-x-4">
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="h-20 w-20 rounded-lg object-cover"
-                />
-                
-                <div>
-                  <h3 className="font-bold text-xl">{item.title}</h3>
-                  <p className="text-gray-600">₹{item.price} per session</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center border rounded-full">
-                  <button 
-                    onClick={() => handleDecrease(item.id)}
-                    className="p-2 hover:bg-blue-100 rounded-l-full"
-                  >
-                    <MinusCircle size={20} className="text-blue-600" />
-                  </button>
-                  <span className="px-4 font-bold">{item.quantity}</span>
-                  <button 
-                    onClick={() => handleIncrease(item.id)}
-                    className="p-2 hover:bg-blue-100 rounded-r-full"
-                  >
-                    <PlusCircle size={20} className="text-blue-600" />
-                  </button>
-                </div>
-                
-                <div className="text-right w-24">
-                  <p className="font-bold">₹{(item.price * item.quantity).toFixed(2)}</p>
-                </div>
-                
-                <button 
-                  onClick={() => handleRemove(item.id)}
-                  className="text-red-500 hover:bg-red-50 p-2 rounded-full"
-                >
-                  <Trash2 size={20} />
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-      
-      {activities.length > 0 && (
-        <div className="p-6 border-t">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <p className="text-xl font-bold">Total:</p>
-              <p className="text-gray-600">Includes all taxes and fees</p>
-            </div>
-            <div className="text-right">
-              <p className="text-3xl font-extrabold text-blue-700">
-                ₹{totalAmount.toFixed(2)}
-              </p>
-            </div>
-          </div>
-          
-          <button 
-            onClick={handleRazorpayPayment}
-            className="w-full bg-green-500 text-white px-8 py-3 rounded-full hover:bg-green-600 transition-colors"
-            disabled={activities.length === 0}
+      >
+        <div className="bg-slate-700 text-white p-6 flex justify-between items-center h-16">
+          <h2 className="text-3xl font-bold">Your Lobby</h2>
+          <button
+            onClick={() => onClose}
+            className="text-white hover:bg-blue-700 p-2 rounded-full transition-colors"
           >
-            Pay with Razorpay
+            <X size={24} />
           </button>
         </div>
-      )}
+
+        <div className="p-6 overflow-y-auto h-[calc(100vh-250px)]">
+          {activities.length === 0 ? (
+            <div className="text-center text-gray-500 py-12">
+              <p className="text-2xl mb-4">Your lobby is empty</p>
+              <p>Explore our game venues and start booking!</p>
+            </div>
+          ) : (
+            activities.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between border-b py-4 hover:bg-blue-50 transition-colors"
+              >
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="h-20 w-20 rounded-lg object-cover"
+                  />
+
+                  <div>
+                    <h3 className="font-bold text-xl">{item.title}</h3>
+                    <p className="text-gray-600">₹{item.price} per session</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center border rounded-full">
+                    <button
+                      onClick={() => handleDecrease(item.id)}
+                      className="p-2 hover:bg-blue-100 rounded-l-full"
+                    >
+                      <MinusCircle size={20} className="text-blue-600" />
+                    </button>
+                    <span className="px-4 font-bold">{item.quantity}</span>
+                    <button
+                      onClick={() => handleIncrease(item.id)}
+                      className="p-2 hover:bg-blue-100 rounded-r-full"
+                    >
+                      <PlusCircle size={20} className="text-blue-600" />
+                    </button>
+                  </div>
+
+                  <div className="text-right w-24">
+                    <p className="font-bold">₹{(item.price * item.quantity).toFixed(2)}</p>
+                  </div>
+
+                  <button
+                    onClick={() => handleRemove(item.id)}
+                    className="text-red-500 hover:bg-red-50 p-2 rounded-full"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {activities.length > 0 && (
+          <div className="p-6 border-t">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <p className="text-xl font-bold">Total:</p>
+                <p className="text-gray-600">Includes all taxes and fees</p>
+              </div>
+              <div className="text-right">
+                <p className="text-3xl font-extrabold text-blue-700">
+                  ₹{totalAmount.toFixed(2)}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleRazorpayPayment}
+              className="w-full bg-green-500 text-white px-8 py-3 rounded-full hover:bg-green-600 transition-colors"
+              disabled={activities.length === 0}
+            >
+              Pay with Razorpay
+            </button>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
   );
 };
 

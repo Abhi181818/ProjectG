@@ -58,8 +58,6 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const userData = result.user;
-
-      // Set the user in context
       dispatch({ type: 'SET_USER', payload: userData });
 
       toast.success('Logged in with Google', {
