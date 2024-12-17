@@ -110,7 +110,7 @@ const Cart = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await fetch("https://projectg-1.onrender.com/create-order", {
+      const response = await fetch("https://projectg-f0a97.uc.r.appspot.com/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: totalAmount, currency: "INR" }),
