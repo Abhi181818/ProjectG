@@ -17,6 +17,7 @@ import BookingPage from './pages/BookingPage/BookingPage';
 import Activities from './pages/Activities/Activities';
 import ActivityPage from './pages/ActivityPage/ActivityPage';
 import ActivityInVenue from './components/Venues/ActivityInVenue';
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 function App() {
   return (
     <UserProvider>
@@ -50,6 +51,7 @@ const MainContent = () => {
           <Route path="/venues/:slug/:id" element={<ActivityInVenue />} />
           <Route path="/activities" element={<Activities />} />
           <Route path='/activities/:slug/:id' element={<ActivityPage />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
           {/* <Route path='/book/:activityName' element={<BookingPage />} /> */}
         </Routes>
       </PageTransition>

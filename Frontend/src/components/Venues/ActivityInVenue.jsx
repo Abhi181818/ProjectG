@@ -4,10 +4,11 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { FaMapMarkerAlt, FaClock, FaChevronRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 const ActivityInVenue = () => {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -18,7 +19,7 @@ const ActivityInVenue = () => {
         setError(null);
         try {
             const activitiesRef = collection(db, 'activities');
-            const q = query(activitiesRef, where('venueId', '==', id)); 
+            const q = query(activitiesRef, where('venueId', '==', id));
             const querySnapshot = await getDocs(q);
             const data = querySnapshot.docs.map(doc => ({
                 id: doc.id,
@@ -55,7 +56,7 @@ const ActivityInVenue = () => {
 
     return (
         <div className="bg-white min-h-screen py-16 px-4">
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -70,7 +71,7 @@ const ActivityInVenue = () => {
                 {loading && (
                     <div className="flex justify-center items-center h-64">
                         <motion.div
-                            animate={{ 
+                            animate={{
                                 scale: [1, 1.1, 1],
                                 rotate: [0, 5, -5, 0]
                             }}
@@ -85,7 +86,7 @@ const ActivityInVenue = () => {
                 )}
 
                 {error && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="text-center text-red-600 bg-red-100 p-4 rounded-lg"
@@ -95,7 +96,7 @@ const ActivityInVenue = () => {
                 )}
 
                 {!loading && !error && activities.length === 0 && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="text-center text-gray-600 bg-gray-100 p-8 rounded-xl"
@@ -104,65 +105,62 @@ const ActivityInVenue = () => {
                     </motion.div>
                 )}
 
-                {!loading && !error && activities.length > 0 && (
-                    <motion.div 
+                {!loading && !error && activities?.length > 0 && (
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ staggerChildren: 0.1 }}
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
                     >
-                        {activities.map((activity) => (
-                            <motion.div
-                                key={activity.id}
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                whileHover={{ 
-                                    scale: 1.05,
-                                    boxShadow: "0 10px 20px rgba(0,0,0,0.1)"
-                                }}
-                                className="bg-white border-2 border-gray-200 rounded-2xl 
-                                    overflow-hidden transform transition-all duration-300 
-                                    hover:border-blue-500 shadow-md"
-                            >
-                                <div className="relative">
-                                    <img
+                        <AnimatePresence>
+                            {activities.map((activity) => (
+                                <motion.div
+                                    key={activity.id}
+                                    whileHover="hover"
+                                    className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 transform transition-all duration-300"
+                                >
+                                    <motion.img
                                         src={activity.imageUrl}
                                         alt={activity.title}
-                                        className="w-full h-56 object-cover filter brightness-90 transition-all duration-300 hover:brightness-100"
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.2 }}
+                                        className="w-full h-56 object-cover transform transition-transform duration-300"
                                     />
-                                    <div className="absolute top-4 right-4 bg-blue-500/80 text-white px-3 py-1 rounded-full text-sm">
-                                        {activity.city}
+                                    <div className="p-6">
+                                        <h2 className="text-2xl font-bold text-gray-800 mb-3 truncate">
+                                            {activity.title}
+                                        </h2>
+                                        <div className="absolute top-4 right-4 bg-blue-500/80 text-white px-3 py-1 rounded-full text-sm">
+                                            {activity.city}
+                                        </div>
+                                        <div className="space-y-2 mb-4">
+                                            <p className="text-gray-600 flex items-center">
+                                                <FaMapMarkerAlt className="mr-2 text-blue-500" />
+                                                <span className="truncate">{activity.city}</span>
+                                            </p>
+                                            <p className="text-gray-600 flex items-center">
+                                                <FaClock className="mr-2 text-green-500" />
+                                                {activity.venueId.openingHours}
+                                            </p>
+
+                                            <p className="text-gray-700 line-clamp-3">
+                                                {activity.description?.length > 30
+                                                    ? `${activity.description.slice(0, 30)}...`
+                                                    : activity.description}
+                                            </p>
+                                        </div>
+                                        <Link
+                                            to={`/activities/${activity.slug}/${activity.id}`}
+                                            className="inline-block w-full text-center bg-blue-600 text-white rounded-full px-6 py-3 hover:bg-blue-700 transition-colors duration-300 ease-in-out font-semibold text-lg"
+                                        >
+                                            Learn More
+                                            <ArrowRight className="inline-block ml-2" />
+                                        </Link>
                                     </div>
-                                </div>
-                                <div className="p-6">
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-3 
-                                        bg-gradient-to-r from-blue-600 to-cyan-700 
-                                        bg-clip-text text-transparent">
-                                        {activity.title}
-                                    </h2>
-                                    <div className="flex items-center text-gray-600 mb-2">
-                                        <FaMapMarkerAlt className="mr-2 text-blue-500" />
-                                        <span>{activity.city}</span>
-                                    </div>
-                                    <div className="flex items-center text-gray-600 mb-4">
-                                        <FaClock className="mr-2 text-blue-500" />
-                                        <span>{activity.venueId.openingHours}</span>
-                                    </div>
-                                    <p className="text-gray-700 mb-6 line-clamp-3">{activity.description}</p>
-                                    <Link
-                                        to={`/activities/${activity.id}`}
-                                        className="group inline-flex items-center 
-                                            bg-gradient-to-r from-blue-600 to-cyan-700 
-                                            text-white rounded-lg px-4 py-2 
-                                            hover:from-blue-700 hover:to-cyan-800 
-                                            transition-all duration-300"
-                                    >
-                                        Learn More
-                                        <FaChevronRight className="ml-2 transition-transform group-hover:translate-x-1" />
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        ))}
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
                     </motion.div>
                 )}
             </motion.div>

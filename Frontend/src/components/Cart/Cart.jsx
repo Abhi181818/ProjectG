@@ -110,7 +110,7 @@ const Cart = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/create-order", {
+      const response = await fetch("https://projectg-1.onrender.com/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: totalAmount, currency: "INR" }),
@@ -225,7 +225,7 @@ const Cart = ({ isOpen, onClose }) => {
                 key={item.id}
                 className="flex items-center justify-between border-b py-4 hover:bg-blue-50 transition-colors"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4 ">
                   <img
                     src={item.imageUrl}
                     alt={item.title}
@@ -238,7 +238,7 @@ const Cart = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 ml-20" >
                   <div className="flex items-center border rounded-full">
                     <button
                       onClick={() => handleDecrease(item.id)}

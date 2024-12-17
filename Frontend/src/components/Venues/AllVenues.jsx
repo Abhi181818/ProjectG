@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FaGlobe, 
-  FaPhoneAlt, 
-  FaEnvelope, 
-  FaMapMarkerAlt, 
-  FaClock, 
-  FaSearch, 
-  FaSort 
+import {
+    FaGlobe,
+    FaPhoneAlt,
+    FaEnvelope,
+    FaMapMarkerAlt,
+    FaClock,
+    FaSearch,
+    FaSort
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { collection, getDocs } from "firebase/firestore";
 import { db } from '../../firebase';
 import { Helmet } from 'react-helmet';
+import { MoveRight } from 'lucide-react';
 
 const AllVenues = () => {
     const [venues, setVenues] = useState([]);
@@ -63,7 +64,7 @@ const AllVenues = () => {
     // Enhanced Variants for Animations
     const containerVariants = {
         hidden: { opacity: 0 },
-        visible: { 
+        visible: {
             opacity: 1,
             transition: {
                 delayChildren: 0.2,
@@ -74,8 +75,8 @@ const AllVenues = () => {
 
     const itemVariants = {
         hidden: { y: 50, opacity: 0 },
-        visible: { 
-            y: 0, 
+        visible: {
+            y: 0,
             opacity: 1,
             transition: {
                 type: "spring",
@@ -87,10 +88,10 @@ const AllVenues = () => {
         hover: {
             scale: 1.03,
             boxShadow: "0 15px 30px rgba(0,0,0,0.1)",
-            transition: { 
+            transition: {
                 type: "spring",
                 damping: 10,
-                stiffness: 300 
+                stiffness: 300
             }
         }
     };
@@ -103,25 +104,26 @@ const AllVenues = () => {
             </Helmet>
 
             <div className="container mx-auto px-4 max-w-6xl">
-                {/* Modern Search and Sort Section */}
-                <motion.div 
+
+                {/* search and filter */}
+                <motion.div
                     initial={{ opacity: 0, y: -40 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
+                    transition={{
                         type: "spring",
                         damping: 12,
-                        stiffness: 100 
+                        stiffness: 100
                     }}
-                    className="mb-12 bg-white shadow-xl rounded-2xl p-6"
+                    className="mb-12 bg-white shadow-xl rounded-3xl p-6"
                 >
                     <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-                        <div className="relative flex-grow">
+                        <div className="relative flex-grow ">
                             <input
                                 type="text"
                                 placeholder="Search venues by name"
                                 value={filter}
                                 onChange={(e) => setFilter(e.target.value)}
-                                className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 text-gray-700 text-lg"
+                                className="w-full pl-12 pr-4 py-4 rounded-full border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 text-gray-700 text-lg"
                             />
                             <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
                         </div>
@@ -129,7 +131,7 @@ const AllVenues = () => {
                             <select
                                 onChange={(e) => setSortOrder(e.target.value)}
                                 value={sortOrder}
-                                className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 appearance-none text-gray-700 text-lg"
+                                className="w-full pl-12 pr-4 py-4 rounded-3xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 appearance-none text-gray-700 text-lg"
                             >
                                 <option value="asc">Sort A-Z</option>
                                 <option value="desc">Sort Z-A</option>
@@ -138,10 +140,8 @@ const AllVenues = () => {
                         </div>
                     </div>
                 </motion.div>
-
-                {/* Loading State */}
                 {loading && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="flex justify-center items-center h-64"
@@ -152,9 +152,8 @@ const AllVenues = () => {
                     </motion.div>
                 )}
 
-                {/* Error State */}
                 {error && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="text-center bg-red-50 border-2 border-red-200 p-8 rounded-2xl max-w-md mx-auto"
@@ -163,10 +162,8 @@ const AllVenues = () => {
                         <p className="text-lg text-red-700">{error}</p>
                     </motion.div>
                 )}
-
-                {/* No Data State */}
                 {!loading && !error && filteredVenues.length === 0 && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="text-center bg-white shadow-lg p-12 rounded-2xl max-w-md mx-auto"
@@ -177,8 +174,8 @@ const AllVenues = () => {
                 )}
 
                 {/* Venues List */}
-                {!loading && !error && filteredVenues.length > 0 && (
-                    <motion.div 
+                {!loading && !error && filteredVenues?.length > 0 && (
+                    <motion.div
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
@@ -206,11 +203,11 @@ const AllVenues = () => {
                                         </h2>
                                         <div className="space-y-2 mb-4">
                                             <p className="text-gray-600 flex items-center">
-                                                <FaMapMarkerAlt className="mr-2 text-blue-500" /> 
+                                                <FaMapMarkerAlt className="mr-2 text-blue-500" />
                                                 <span className="truncate">{venue.address}</span>
                                             </p>
                                             <p className="text-gray-600 flex items-center">
-                                                <FaClock className="mr-2 text-green-500" /> 
+                                                <FaClock className="mr-2 text-green-500" />
                                                 {venue.openingHours}
                                             </p>
                                             <p className="text-gray-700 line-clamp-3">
@@ -222,6 +219,7 @@ const AllVenues = () => {
                                             className="inline-block w-full text-center bg-blue-600 text-white rounded-full px-6 py-3 hover:bg-blue-700 transition-colors duration-300 ease-in-out font-semibold text-lg"
                                         >
                                             Explore Venue
+                                            <MoveRight className="inline-block ml-2" size={24} />
                                         </Link>
                                     </div>
                                 </motion.div>

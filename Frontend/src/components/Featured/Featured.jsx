@@ -119,7 +119,12 @@ const FeaturedActivities = () => {
                 />
                 <div className="p-6 flex flex-col">
                   <h3 className="text-2xl font-bold text-white mb-3">{activity.title}</h3>
-                  <p className="text-slate-300 flex-grow mb-4">{activity.description}</p>
+                  <p className="text-slate-300 flex-grow mb-4">
+                    {activity.description.length > 40
+                      ? `${activity.description.slice(0, 40)}...`
+                      : activity.description}
+                  </p>
+
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

@@ -6,6 +6,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { toast } from 'sonner';
 import { FaPlus, FaTimes, FaUpload, FaSave } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { Mail, MailIcon, MapIcon, Phone, PhoneIcon, PinIcon, UserCircle } from 'lucide-react';
 
 const Profile = () => {
     const { state } = useUser();
@@ -94,7 +95,7 @@ const Profile = () => {
     };
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -103,7 +104,7 @@ const Profile = () => {
             <div className="max-w-7xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden">
                 <div className="grid md:grid-cols-3 gap-8 p-8">
                     {/* Profile Image Section */}
-                    <motion.div 
+                    <motion.div
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 300 }}
@@ -129,7 +130,7 @@ const Profile = () => {
                     </motion.div>
 
                     {/* Personal Details Section */}
-                    <motion.div 
+                    <motion.div
                         initial={{ x: -50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.2 }}
@@ -137,7 +138,9 @@ const Profile = () => {
                     >
                         <div className="grid md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-indigo-700 font-medium mb-2">Name</label>
+                                <label className="block text-indigo-700 font-medium mb-2">
+                                    <UserCircle className="w-4 h-4 inline-block -mt-1" />
+                                    {" "} Name</label>
                                 <input
                                     type="text"
                                     name="name"
@@ -148,7 +151,9 @@ const Profile = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-indigo-700 font-medium mb-2">Email</label>
+                                <label className="block text-indigo-700 font-medium mb-2">
+                                    <MailIcon className="w-4 h-4 inline-block -mt-1" />
+                                    {" "}Email</label>
                                 <input
                                     type="email"
                                     name="email"
@@ -159,22 +164,67 @@ const Profile = () => {
                                 />
                             </div>
                         </div>
-                        <div>
-                            <label className="block text-indigo-700 font-medium mb-2">Phone Number</label>
-                            <input
-                                type="text"
-                                name="phone"
-                                className="w-full px-4 py-2 border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-400 transition-all"
-                                placeholder="Your phone number"
-                                value={userDetails.phone}
-                                onChange={handleChange}
-                            />
+                        <div className='grid grid-cols-2 gap-4'>
+                            <div>
+                                <label className="block text-indigo-700 font-medium mb-2">
+                                    <PhoneIcon className="w-4 h-4 inline-block -mt-1" />
+                                    {" "}PhoneNumber</label>
+                                <input
+                                    type="text"
+                                    name="phone"
+                                    className="w-full px-4 py-2 border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-400 transition-all"
+                                    placeholder="Your phone number"
+                                    value={userDetails.phone}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-indigo-700 font-medium mb-2">
+                                    <MapIcon className="w-4 h-4 inline-block -mt-1" />
+                                    {" "}Country</label>
+                                <input
+                                    type="text"
+                                    name="country"
+                                    className="w-full px-4 py-2 border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-400 transition-all"
+                                    placeholder="Your country"
+                                    value={userDetails.country}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+                        <div className='grid grid-cols-2 gap-4'>
+                            <div>
+                                <label className="block text-indigo-700 font-medium mb-2">
+                                    <MapIcon className="w-4 h-4 inline-block -mt-1" />
+                                    {" "}State</label>
+                                <input
+                                    type="text"
+                                    name="state"
+                                    className="w-full px-4 py-2 border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-400 transition-all"
+                                    placeholder="Your state"
+                                    value={userDetails.state}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-indigo-700 font-medium mb-2">
+                                    <PinIcon className="w-4 h-4 inline-block -mt-1" />
+                                    {" "}City</label>
+                                <input
+                                    type="text"
+                                    name="city"
+                                    className="w-full px-4 py-2 border-2 border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-400 transition-all"
+                                    placeholder="Your city"
+                                    value={userDetails.city}
+                                    onChange={handleChange}
+                                />
+                            </div>
                         </div>
                     </motion.div>
                 </div>
 
                 {/* Interests Section */}
-                <motion.div 
+                <motion.div
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
@@ -183,15 +233,14 @@ const Profile = () => {
                     <h3 className="text-2xl font-bold text-indigo-800 mb-6">Your Interests</h3>
                     <div className="flex flex-wrap gap-4">
                         {interestsList.map((interest) => (
-                            <motion.div 
+                            <motion.div
                                 key={interest}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className={`flex items-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 ${
-                                    interests.includes(interest) 
-                                    ? 'bg-indigo-600 text-white' 
+                                className={`flex items-center px-4 py-2 rounded-full cursor-pointer transition-all duration-300 ${interests.includes(interest)
+                                    ? 'bg-indigo-600 text-white'
                                     : 'bg-white text-indigo-600 border border-indigo-200'
-                                }`}
+                                    }`}
                                 onClick={() => handleInterestChange(interest)}
                             >
                                 {interests.includes(interest) ? (
