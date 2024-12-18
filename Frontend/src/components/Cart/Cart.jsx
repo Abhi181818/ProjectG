@@ -1,6 +1,4 @@
-// Cart.jsx
 import React, { useState, useEffect } from "react";
-import { XMarkIcon, PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 import { doc, getDoc, updateDoc, collection, addDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import { toast } from "sonner";
@@ -101,7 +99,6 @@ const Cart = ({ isOpen, onClose }) => {
     0
   );
 
-
   // Razorpay Payment Integration
   const handleRazorpayPayment = async () => {
     if (!window.Razorpay) {
@@ -186,11 +183,6 @@ const Cart = ({ isOpen, onClose }) => {
     }
   };
 
-  // Prevent cart from closing when clicking inside the cart
-  const handleCartClick = (e) => {
-    e.stopPropagation();
-  };
-
   return (
     <div
       onClick={onClose}
@@ -201,45 +193,45 @@ const Cart = ({ isOpen, onClose }) => {
         onClick={(e) => e.stopPropagation()}
         className={`fixed inset-y-0 right-0 transform transition-transform duration-300 
         ${isOpen ? "translate-x-0" : "translate-x-full"} 
-        bg-white shadow-2xl w-[450px] h-full overflow-hidden z-50`}
+        bg-white shadow-2xl w-full sm:w-[450px] h-full overflow-hidden z-50`}
       >
-        <div className="bg-slate-700 text-white p-6 flex justify-between items-center h-16">
-          <h2 className="text-3xl font-bold">Your Lobby</h2>
+        <div className="bg-slate-700 text-white p-4 sm:p-6 flex justify-between items-center h-16">
+          <h2 className="text-2xl sm:text-3xl font-bold">Your Lobby</h2>
           <button
-            onClick={() => onClose}
+            onClick={onClose}
             className="text-white hover:bg-blue-700 p-2 rounded-full transition-colors"
           >
             <X size={24} />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto h-[calc(100vh-250px)]">
+        <div className="p-4 sm:p-6 overflow-y-auto h-[calc(100vh-250px)]">
           {activities.length === 0 ? (
             <div className="text-center text-gray-500 py-12">
-              <p className="text-2xl mb-4">Your lobby is empty</p>
-              <p>Explore our game venues and start booking!</p>
+              <p className="text-xl sm:text-2xl mb-4">Your lobby is empty</p>
+              <p className="text-sm sm:text-base">Explore our game venues and start booking!</p>
             </div>
           ) : (
             activities.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between border-b py-4 hover:bg-blue-50 transition-colors"
+                className="flex flex-col sm:flex-row items-center justify-between border-b py-4 hover:bg-blue-50 transition-colors"
               >
-                <div className="flex items-center space-x-4 ">
+                <div className="flex items-center space-x-4 mb-4 sm:mb-0">
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="h-20 w-20 rounded-lg object-cover"
+                    className="h-16 w-16 sm:h-20 sm:w-20 rounded-lg object-cover"
                   />
 
                   <div>
-                    <h3 className="font-bold text-xl">{item.title}</h3>
-                    <p className="text-gray-600">₹{item.price} per session</p>
+                    <h3 className="font-bold text-lg sm:text-xl">{item.title}</h3>
+                    <p className="text-gray-600 text-sm sm:text-base">₹{item.price} per session</p>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2 ml-20" >
-                  <div className="flex items-center border rounded-full">
+                <div className="flex flex-wrap items-center justify-between w-full sm:w-auto space-x-2 sm:ml-20">
+                  <div className="flex items-center border rounded-full mb-2 sm:mb-0">
                     <button
                       onClick={() => handleDecrease(item.id)}
                       className="p-2 hover:bg-blue-100 rounded-l-full"
@@ -255,7 +247,7 @@ const Cart = ({ isOpen, onClose }) => {
                     </button>
                   </div>
 
-                  <div className="text-right w-24">
+                  <div className="text-right w-full sm:w-24 mb-2 sm:mb-0">
                     <p className="font-bold">₹{(item.price * item.quantity).toFixed(2)}</p>
                   </div>
 
@@ -272,14 +264,14 @@ const Cart = ({ isOpen, onClose }) => {
         </div>
 
         {activities.length > 0 && (
-          <div className="p-6 border-t">
+          <div className="p-4 sm:p-6 border-t">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <p className="text-xl font-bold">Total:</p>
-                <p className="text-gray-600">Includes all taxes and fees</p>
+                <p className="text-lg sm:text-xl font-bold">Total:</p>
+                <p className="text-gray-600 text-sm sm:text-base">Includes all taxes and fees</p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-extrabold text-blue-700">
+                <p className="text-2xl sm:text-3xl font-extrabold text-blue-700">
                   ₹{totalAmount.toFixed(2)}
                 </p>
               </div>
