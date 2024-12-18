@@ -45,7 +45,7 @@ const Home = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-gradient-to-br from-slate-50 to-slate-100"
+      className="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen relative"
     >
       <Helmet>
         <title>Ziplay : Home</title>
@@ -93,7 +93,7 @@ const Home = () => {
               className="relative"
             >
               {/* Carousel */}
-              <div className="overflow-hidden relative shadow-2xl rounded-2xl">
+              <div className="overflow-hidden relative shadow-2xl rounded-2xl h-96">
                 <AnimatePresence initial={false}>
                   {images.map((image, index) => (
                     currentIndex === index && (
@@ -105,7 +105,7 @@ const Home = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.1 }}
                         transition={{ duration: 0.5 }}
-                        className="h-96 w-full object-cover flex-shrink-0 rounded-2xl" 
+                        className="absolute inset-0 h-full w-full object-cover flex-shrink-0 rounded-2xl" 
                       />
                     )
                   ))}
@@ -128,7 +128,7 @@ const Home = () => {
                   &gt;
                 </motion.button>
 
-                <div className="flex justify-center mt-4 mb-4 space-x-2">
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                   {images.map((_, index) => (
                     <motion.button
                       key={index}
@@ -169,7 +169,11 @@ const Home = () => {
         <FeaturedActivities />
       </div>
 
-      {showPopup && <CityPopup onClose={() => setShowPopup(false)} />}
+      {showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <CityPopup onClose={() => setShowPopup(false)} />
+        </div>
+      )}
     </motion.div>
   );
 };
