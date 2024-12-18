@@ -11,17 +11,19 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve the built app with Nginx
-FROM nginx:1.23-alpine
+# Stage 2: Serve the built app with 'serve' (a static file server)
+FROM node:18-alpine
 
-# Copy the built app from the builder stage (make sure it's pointing to the correct build directory)
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# Configure Nginx to listen on port 8080 (modifying default config)
-RUN sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/nginx.conf
+# Install serve globally
+RUN npm install -g serve
+
+# Copy the built React app from the builder stage
+COPY --from=builder /app/dist /app/build
 
 # Expose port 8080
 EXPOSE 8080
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start the server to serve the build files
+CMD ["serve", "-s", "build", "-l", "8080"]
