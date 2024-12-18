@@ -16,8 +16,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-// /googleProvider
 const googleProvider = new GoogleAuthProvider();
 const auth = getAuth(app);
 const db = getFirestore(app);

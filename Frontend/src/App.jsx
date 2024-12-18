@@ -18,6 +18,7 @@ import Activities from './pages/Activities/Activities';
 import ActivityPage from './pages/ActivityPage/ActivityPage';
 import ActivityInVenue from './components/Venues/ActivityInVenue';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
+import AdminDashboard from './pages/AdminDashboard/AdminDashBoard';
 function App() {
   return (
     <UserProvider>
@@ -52,7 +53,7 @@ const MainContent = () => {
           <Route path="/activities" element={<Activities />} />
           <Route path='/activities/:slug/:id' element={<ActivityPage />} />
           <Route path='/forgot-password' element={<ForgotPassword />} />
-          {/* <Route path='/book/:activityName' element={<BookingPage />} /> */}
+          <Route path='/adminPanel_56DpQ' element={<AdminDashboard />} />
         </Routes>
       </PageTransition>
     </main>
