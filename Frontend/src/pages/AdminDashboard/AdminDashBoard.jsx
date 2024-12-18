@@ -28,16 +28,13 @@ import {
 } from 'firebase/auth';
 import { db, storage, auth } from '../../firebase';
 
-const ADMIN_EMAIL = 'abhishek.ay050103@gmail.com'; // Configurable admin email
+const ADMIN_EMAIL = 'abhishek.ay050103@gmail.com'; 
 
 const AdminDashboard = () => {
-  // Authentication state
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
-
-  // Existing state from previous implementation
   const [activeTab, setActiveTab] = useState('venues');
   const [venues, setVenues] = useState([]);
   const [activities, setActivities] = useState([]);
@@ -76,17 +73,13 @@ const AdminDashboard = () => {
 
     return () => unsubscribe();
   }, []);
-
-  // Login handler
   const handleLogin = async (e) => {
     e.preventDefault();
     setAuthError('');
     
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      
-      // Additional check for admin email
-      if (userCredential.user.email !== ADMIN_EMAIL) {
+            if (userCredential.user.email !== ADMIN_EMAIL) {
         await signOut(auth);
         setAuthError('Access denied. Invalid credentials.');
         return;
@@ -96,8 +89,6 @@ const AdminDashboard = () => {
       console.error("Login error:", error);
     }
   };
-
-  // Logout handler
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -134,7 +125,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Image upload handler
   const handleImageUpload = async (file, collectionName) => {
     if (!file) return null;
     try {
@@ -147,7 +137,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Add venue handler
   const handleAddVenue = async (e) => {
     e.preventDefault();
     try {
@@ -159,7 +148,6 @@ const AdminDashboard = () => {
 
       await addDoc(collection(db, 'venues'), venueData);
       
-      // Reset state and close modal
       setNewVenue({
         name: '', address: '', slug: '', imageUrl: '', 
         phoneNumber: '', email: '', venueLocationUrl: ''
@@ -171,7 +159,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Add activity handler
   const handleAddActivity = async (e) => {
     e.preventDefault();
     try {
