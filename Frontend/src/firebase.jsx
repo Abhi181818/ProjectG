@@ -16,7 +16,7 @@ const firebaseConfig = {
   
 };
 console.log("ENV:", {
-  exists: !!process.env.VITE_FIREBASE_API_KEY,
+  exists: !!import.meta.env.VITE_FIREBASE_API_KEY,
   keyLength: import.meta.env.VITE_FIREBASE_API_KEY?.length,
   // Don't log actual key in production
 });
