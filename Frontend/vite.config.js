@@ -1,13 +1,10 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import dotenv from 'dotenv'
-
-dotenv.config()
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
 
 export default defineConfig({
   plugins: [react()],
   define: {
-    'process.env': {
+    'import.meta.env': {
       VITE_FIREBASE_API_KEY: process.env.VITE_FIREBASE_API_KEY,
       VITE_AUTH_DOMAIN: process.env.VITE_AUTH_DOMAIN,
       VITE_PROJECT_ID: process.env.VITE_PROJECT_ID,
@@ -17,4 +14,4 @@ export default defineConfig({
       VITE_MEASUREMENT_ID: process.env.VITE_MEASUREMENT_ID
     }
   }
-})
+});
