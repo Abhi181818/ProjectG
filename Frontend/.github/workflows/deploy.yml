@@ -1,122 +1,30 @@
-name: Deploy to GCP
+- name: Fetch Secrets and Deploy to Cloud Run
+  run: |
+    echo "Fetching secrets from Secret Manager..."
 
-on:
-  push:
-    branches:
-      - main  # Trigger deployment when pushing to main branch
+    # Fetch and export secrets as environment variables
+    export VITE_APP_ID=$(gcloud secrets versions access latest --secret="VITE_APP_ID")
+    export VITE_AUTH_DOMAIN=$(gcloud secrets versions access latest --secret="VITE_AUTH_DOMAIN")
+    export VITE_FIREBASE_API_KEY=$(gcloud secrets versions access latest --secret="VITE_FIREBASE_API_KEY")
+    export VITE_MEASUREMENT_ID=$(gcloud secrets versions access latest --secret="VITE_MEASUREMENT_ID")
+    export VITE_MESSAGING_SENDER_ID=$(gcloud secrets versions access latest --secret="VITE_MESSAGING_SENDER_ID")
+    export VITE_PROJECT_ID=$(gcloud secrets versions access latest --secret="VITE_PROJECT_ID")
+    export VITE_STORAGE_BUCKET=$(gcloud secrets versions access latest --secret="VITE_STORAGE_BUCKET")
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest  # Use an Ubuname: Deploy to GCP with Secrets
+    # Logging for debugging
+    echo "VITE_FIREBASE_API_KEY: $VITE_FIREBASE_API_KEY"  # Log to check if the key is fetched correctly (be careful not to log sensitive data)
 
-on:
-  push:
-    branches:
-      - main  # Trigger deployment when pushing to main branch
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest  # Use an Ubuntu runner for the CI/CD job
-
-    steps:
-      # Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      # Set up Docker
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
-
-      # Set up Google Cloud credentials
-      - name: Set up Google Cloud credentials
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      # Set up GCP project
-      - name: Set GCP project
-        run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-
-      # Build the Docker image (without using build-arg)
-      - name: Build Docker image
-        run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new ./Frontend
-
-      # Push the Docker image to GCR
-      - name: Push Docker image to GCR
-        run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new
-
-      # Deploy to Cloud Run using Secret Manager to pass environment variables
-      - name: Deploy to Cloud Run
-        run: |
-          # Fetch secrets from Secret Manager and export them as environment variables
-          export VITE_APP_ID=$(gcloud secrets versions access latest --secret="VITE_APP_ID")
-          export VITE_AUTH_DOMAIN=$(gcloud secrets versions access latest --secret="VITE_AUTH_DOMAIN")
-          export VITE_FIREBASE_API_KEY=$(gcloud secrets versions access latest --secret="VITE_FIREBASE_API_KEY")
-          export VITE_MEASUREMENT_ID=$(gcloud secrets versions access latest --secret="VITE_MEASUREMENT_ID")
-          export VITE_MESSAGING_SENDER_ID=$(gcloud secrets versions access latest --secret="VITE_MESSAGING_SENDER_ID")
-          export VITE_PROJECT_ID=$(gcloud secrets versions access latest --secret="VITE_PROJECT_ID")
-          export VITE_STORAGE_BUCKET=$(gcloud secrets versions access latest --secret="VITE_STORAGE_BUCKET")
-
-          # Deploy to Cloud Run with environment variables
-          gcloud run deploy ziplay-new \
-            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new \
-            --platform=managed \
-            --region=us-central1 \
-            --allow-unauthenticated \
-            --update-env-vars \
-              VITE_APP_ID=$VITE_APP_ID,\
-              VITE_AUTH_DOMAIN=$VITE_AUTH_DOMAIN,\
-              VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY,\
-              VITE_MEASUREMENT_ID=$VITE_MEASUREMENT_ID,\
-              VITE_MESSAGING_SENDER_ID=$VITE_MESSAGING_SENDER_ID,\
-              VITE_PROJECT_ID=$VITE_PROJECT_ID,\
-              VITE_STORAGE_BUCKET=$VITE_STORAGE_BUCKET
-ntu runner for the CI/CD job
-
-    steps:
-      # Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      # Set up Docker
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
-
-      # Set up Google Cloud credentials
-      - name: Set up Google Cloud credentials
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      # Set up GCP project
-      - name: Set GCP project
-        run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-
-      # Build the Docker image with Vite environment variables
-      - name: Build Docker image
-        run: |
-          docker build --build-arg VITE_APP_ID=${{ secrets.VITE_APP_ID }} \
-                       --build-arg VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }} \
-                       --build-arg VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }} \
-                       --build-arg VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }} \
-                       --build-arg VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }} \
-                       --build-arg VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }} \
-                       --build-arg VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }} \
-                       -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new ./Frontend  # Build image from the Frontend folder
-
-      # Push the Docker image to GCR
-      - name: Push Docker image to GCR
-        run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new  # Push the built image to GCR
-
-      # Deploy to Google Cloud Run with environment variables
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy ziplay-new \
-            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new \
-            --platform=managed \
-            --region=us-central1 \
-            --allow-unauthenticated \
-            --update-env-vars VITE_APP_ID=${{ secrets.VITE_APP_ID }},VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }},VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }},VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }},VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }},VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }},VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }}
+    # Deploy to Cloud Run with environment variables
+    gcloud run deploy ziplay-new \
+      --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new \
+      --platform=managed \
+      --region=us-central1 \
+      --allow-unauthenticated \
+      --update-env-vars \
+        VITE_APP_ID="$VITE_APP_ID",\
+        VITE_AUTH_DOMAIN="$VITE_AUTH_DOMAIN",\
+        VITE_FIREBASE_API_KEY="$VITE_FIREBASE_API_KEY",\
+        VITE_MEASUREMENT_ID="$VITE_MEASUREMENT_ID",\
+        VITE_MESSAGING_SENDER_ID="$VITE_MESSAGING_SENDER_ID",\
+        VITE_PROJECT_ID="$VITE_PROJECT_ID",\
+        VITE_STORAGE_BUCKET="$VITE_STORAGE_BUCKET"
