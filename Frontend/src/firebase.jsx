@@ -6,7 +6,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from 'firebase/storage';
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: "AIzaSyCKvpyW4lT_02RxXRPkc12eXBjhO_Nx6tA",
   authDomain: "projectg-f0a97.firebaseapp.com",
   projectId: "projectg-f0a97",
   storageBucket: "projectg-f0a97.appspot.com",
@@ -16,7 +16,6 @@ const firebaseConfig = {
 };
 console.log("ENV:", {
   exists: !!import.meta.env.VITE_FIREBASE_API_KEY,
-  new: process.env.VITE_FIREBASE_API_KEY,
   keyLength: import.meta.env.VITE_FIREBASE_API_KEY?.length,
   // Don't log actual key in production
 });
