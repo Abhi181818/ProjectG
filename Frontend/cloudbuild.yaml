@@ -1,37 +1,17 @@
 steps:
-  # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
       - 'gcr.io/$PROJECT_ID/ziplay-new'
-      - '--build-arg'
-      - 'VITE_FIREBASE_API_KEY=${_VITE_FIREBASE_API_KEY}'
-      - '--build-arg'
-      - 'VITE_AUTH_DOMAIN=${_VITE_AUTH_DOMAIN}'
-      - '--build-arg'
-      - 'VITE_PROJECT_ID=${_VITE_PROJECT_ID}'
-      - '--build-arg'
-      - 'VITE_STORAGE_BUCKET=${_VITE_STORAGE_BUCKET}'
-      - '--build-arg'
-      - 'VITE_MESSAGING_SENDER_ID=${_VITE_MESSAGING_SENDER_ID}'
-      - '--build-arg'
-      - 'VITE_APP_ID=${_VITE_APP_ID}'
-      - '--build-arg'
-      - 'VITE_MEASUREMENT_ID=${_VITE_MEASUREMENT_ID}'
-      - './Frontend'
-    secretEnv: ['GCP_SA_KEY']
-
-  # Push the container image to Container Registry
+      - './Frontend'  # specify frontend folder as context
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'gcr.io/$PROJECT_ID/ziplay-new'
-
-  # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
     args:
+      - 'gcloud'
       - 'run'
       - 'deploy'
       - 'ziplay-new'
@@ -42,25 +22,6 @@ steps:
       - '--region'
       - 'us-central1'
       - '--allow-unauthenticated'
-      - '--set-env-vars'
-      - 'VITE_FIREBASE_API_KEY=${_VITE_FIREBASE_API_KEY},VITE_AUTH_DOMAIN=${_VITE_AUTH_DOMAIN},VITE_PROJECT_ID=${_VITE_PROJECT_ID},VITE_STORAGE_BUCKET=${_VITE_STORAGE_BUCKET},VITE_MESSAGING_SENDER_ID=${_VITE_MESSAGING_SENDER_ID},VITE_APP_ID=${_VITE_APP_ID},VITE_MEASUREMENT_ID=${_VITE_MEASUREMENT_ID}'
 
 images:
   - 'gcr.io/$PROJECT_ID/ziplay-new'
-
-substitutions:
-  _VITE_FIREBASE_API_KEY: ${_VITE_FIREBASE_API_KEY}
-  _VITE_AUTH_DOMAIN: ${_VITE_AUTH_DOMAIN}
-  _VITE_PROJECT_ID: ${_VITE_PROJECT_ID}
-  _VITE_STORAGE_BUCKET: ${_VITE_STORAGE_BUCKET}
-  _VITE_MESSAGING_SENDER_ID: ${_VITE_MESSAGING_SENDER_ID}
-  _VITE_APP_ID: ${_VITE_APP_ID}
-  _VITE_MEASUREMENT_ID: ${_VITE_MEASUREMENT_ID}
-
-availableSecrets:
-  secretManager:
-    - versionName: projects/$PROJECT_ID/secrets/GCP_SA_KEY
-      env: 'GCP_SA_KEY'
-
-options:
-  logging: CLOUD_LOGGING_ONLY

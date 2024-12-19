@@ -1,47 +1,29 @@
-# Stage 1: Build the React app
+# Stage 1: Build the React app using Node.js
 FROM node:18-alpine AS builder
+
 WORKDIR /app
 
-# Add build arguments
-ARG VITE_FIREBASE_API_KEY
-ARG VITE_AUTH_DOMAIN
-ARG VITE_PROJECT_ID
-ARG VITE_STORAGE_BUCKET
-ARG VITE_MESSAGING_SENDER_ID
-ARG VITE_APP_ID
-ARG VITE_MEASUREMENT_ID
-
-# Copy package files first for better caching
+# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the application
+# Copy the source code and build the app
 COPY . .
-
-# Set environment variables
-ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY \
-    VITE_AUTH_DOMAIN=$VITE_AUTH_DOMAIN \
-    VITE_PROJECT_ID=$VITE_PROJECT_ID \
-    VITE_STORAGE_BUCKET=$VITE_STORAGE_BUCKET \
-    VITE_MESSAGING_SENDER_ID=$VITE_MESSAGING_SENDER_ID \
-    VITE_APP_ID=$VITE_APP_ID \
-    VITE_MEASUREMENT_ID=$VITE_MEASUREMENT_ID
-
-# Build the application
 RUN npm run build
 
-# Stage 2: Serve the built application
+# Stage 2: Serve the built app with 'serve' (a static file server)
 FROM node:18-alpine
+
 WORKDIR /app
 
-# Install serve
+# Install serve globally
 RUN npm install -g serve
 
-# Copy built files from builder stage
+# Copy the built React app from the builder stage
 COPY --from=builder /app/dist /app/build
 
-# Expose port
+# Expose port 8080
 EXPOSE 8080
 
-# Start the application
+# Start the server to serve the build files
 CMD ["serve", "-s", "build", "-l", "8080"]
