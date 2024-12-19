@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FeaturedActivities from '../../components/Featured/Featured';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import { ArrowRightIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import Typewriter from 'typewriter-effect';
 import { Link } from 'react-router-dom';
 import CityPopup from '../../components/CityPopup/CityPopup';
@@ -56,7 +56,7 @@ const Home = () => {
       <div className="relative overflow-hidden">
         <div className="pt-16">
           <div className="relative mx-auto max-w-7xl px-4 sm:relative sm:px-6 lg:px-8">
-            <motion.div 
+            <motion.div
               initial={{ x: -100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.8, type: "spring" }}
@@ -86,7 +86,7 @@ const Home = () => {
               </div>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, type: "spring" }}
@@ -105,7 +105,7 @@ const Home = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.1 }}
                         transition={{ duration: 0.5 }}
-                        className="absolute inset-0 h-full w-full object-cover flex-shrink-0 rounded-2xl" 
+                        className="absolute inset-0 h-full w-full object-cover flex-shrink-0 rounded-2xl"
                       />
                     )
                   ))}
@@ -147,8 +147,8 @@ const Home = () => {
                 transition={{ delay: 0.5, type: "spring" }}
                 className="mt-8 flex justify-center"
               >
-                <Link 
-                  to="/book" 
+                <Link
+                  to="/book"
                   className="relative inline-flex items-center justify-start py-3 pl-4 pr-12 overflow-hidden font-semibold text-indigo-600 transition-all duration-150 ease-in-out rounded-3xl hover:pl-10 hover:pr-6 bg-gray-50 group"
                 >
                   <span className="absolute bottom-0 left-0 w-full h-1 transition-all duration-150 ease-in-out bg-indigo-600 group-hover:h-full"></span>
