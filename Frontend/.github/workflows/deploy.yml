@@ -1,0 +1,56 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment when pushing to main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  # Use an Ubuntu runner for the CI/CD job
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # Set up Google Cloud credentials
+      - name: Set up Google Cloud credentials
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Set up GCP project
+      - name: Set GCP project
+        run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+      # Build the Docker image with Vite environment variables
+      - name: Build Docker image
+        run: |
+          docker build --build-arg VITE_APP_ID=${{ secrets.VITE_APP_ID }} \
+                       --build-arg VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }} \
+                       --build-arg VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }} \
+                       --build-arg VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }} \
+                       --build-arg VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }} \
+                       --build-arg VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }} \
+                       --build-arg VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }} \
+                       -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new ./Frontend  # Build image from the Frontend folder
+
+      # Push the Docker image to GCR
+      - name: Push Docker image to GCR
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new  # Push the built image to GCR
+
+      # Deploy to Google Cloud Run with environment variables
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ziplay-new \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new \
+            --platform=managed \
+            --region=us-central1 \
+            --allow-unauthenticated \
+            --update-env-vars VITE_APP_ID=${{ secrets.VITE_APP_ID }},VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }},VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }},VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }},VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }},VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }},VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }}
