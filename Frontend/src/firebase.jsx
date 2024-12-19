@@ -14,7 +14,12 @@ const firebaseConfig = {
   appId: "1:1035267907034:web:d6cf483554fe88906734e3",
   measurementId: "G-5D23PNZ9YL"
 };
-
+console.log("ENV:", {
+  exists: !!import.meta.env.VITE_FIREBASE_API_KEY,
+  new: process.env.VITE_FIREBASE_API_KEY,
+  keyLength: import.meta.env.VITE_FIREBASE_API_KEY?.length,
+  // Don't log actual key in production
+});
 const app = initializeApp(firebaseConfig);
 const googleProvider = new GoogleAuthProvider();
 const auth = getAuth(app);
