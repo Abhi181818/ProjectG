@@ -1,40 +1,27 @@
 steps:
-  # Step 1: Build Docker image using Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
       - 'gcr.io/$PROJECT_ID/ziplay-new'
-      - './Frontend'  # specify the path to the frontend folder
-
-  # Step 2: Push the Docker image to Google Container Registry
+      - './Frontend'  # specify frontend folder as context
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'gcr.io/$PROJECT_ID/ziplay-new'
-
-  # Step 3: Deploy to Cloud Run with environment variables
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: '/bin/sh'
     args:
-      - '-c'
-      - |
-        echo "Deploying to Cloud Run..."
-        
-        # Use the substituted API keys (they will be injected during the Cloud Build trigger)
-        gcloud run deploy ziplay-new \
-          --image=gcr.io/$PROJECT_ID/ziplay-new \
-          --platform=managed \
-          --region=us-central1 \
-          --allow-unauthenticated \
-          --update-env-vars \
-            VITE_FIREBASE_API_KEY="${_VITE_FIREBASE_API_KEY}",\
-            VITE_AUTH_DOMAIN="${_VITE_AUTH_DOMAIN}",\
-            VITE_PROJECT_ID="${_VITE_PROJECT_ID}",\
-            VITE_STORAGE_BUCKET="${_VITE_STORAGE_BUCKET}",\
-            VITE_MESSAGING_SENDER_ID="${_VITE_MESSAGING_SENDER_ID}",\
-            VITE_APP_ID="${_VITE_APP_ID}",\
-            VITE_MEASUREMENT_ID="${_VITE_MEASUREMENT_ID}"
+      - 'gcloud'
+      - 'run'
+      - 'deploy'
+      - 'ziplay-new'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/ziplay-new'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'us-central1'
+      - '--allow-unauthenticated'
 
 images:
   - 'gcr.io/$PROJECT_ID/ziplay-new'
