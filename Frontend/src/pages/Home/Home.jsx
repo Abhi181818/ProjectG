@@ -71,7 +71,8 @@ const Home = () => {
                     delay: 75,
                     wrapperClassName: 'text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl',
                   }}
-                />
+                  />
+                  {import.meta.env.VITE_FIREBASE_API_KEY}
               </div>
               <div className="h-32 mt-4">
                 <Typewriter
