@@ -1,30 +1,68 @@
-- name: Fetch Secrets and Deploy to Cloud Run
-  run: |
-    echo "Fetching secrets from Secret Manager..."
+name: Deploy to GCP with Secrets
 
-    # Fetch and export secrets as environment variables
-    export VITE_APP_ID=$(gcloud secrets versions access latest --secret="VITE_APP_ID")
-    export VITE_AUTH_DOMAIN=$(gcloud secrets versions access latest --secret="VITE_AUTH_DOMAIN")
-    export VITE_FIREBASE_API_KEY=$(gcloud secrets versions access latest --secret="VITE_FIREBASE_API_KEY")
-    export VITE_MEASUREMENT_ID=$(gcloud secrets versions access latest --secret="VITE_MEASUREMENT_ID")
-    export VITE_MESSAGING_SENDER_ID=$(gcloud secrets versions access latest --secret="VITE_MESSAGING_SENDER_ID")
-    export VITE_PROJECT_ID=$(gcloud secrets versions access latest --secret="VITE_PROJECT_ID")
-    export VITE_STORAGE_BUCKET=$(gcloud secrets versions access latest --secret="VITE_STORAGE_BUCKET")
+on:
+  push:
+    branches:
+      - main  # Trigger deployment when pushing to the main branch
 
-    # Logging for debugging
-    echo "VITE_FIREBASE_API_KEY: $VITE_FIREBASE_API_KEY"  # Log to check if the key is fetched correctly (be careful not to log sensitive data)
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  # Use an Ubuntu runner for the CI/CD job
 
-    # Deploy to Cloud Run with environment variables
-    gcloud run deploy ziplay-new \
-      --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new \
-      --platform=managed \
-      --region=us-central1 \
-      --allow-unauthenticated \
-      --update-env-vars \
-        VITE_APP_ID="$VITE_APP_ID",\
-        VITE_AUTH_DOMAIN="$VITE_AUTH_DOMAIN",\
-        VITE_FIREBASE_API_KEY="$VITE_FIREBASE_API_KEY",\
-        VITE_MEASUREMENT_ID="$VITE_MEASUREMENT_ID",\
-        VITE_MESSAGING_SENDER_ID="$VITE_MESSAGING_SENDER_ID",\
-        VITE_PROJECT_ID="$VITE_PROJECT_ID",\
-        VITE_STORAGE_BUCKET="$VITE_STORAGE_BUCKET"
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # Set up Google Cloud credentials
+      - name: Set up Google Cloud credentials
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Set up GCP project
+      - name: Set GCP project
+        run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new ./Frontend
+
+      # Push the Docker image to GCR
+      - name: Push Docker image to GCR
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new
+
+      # Fetch secrets from Secret Manager and deploy to Cloud Run
+      - name: Fetch Secrets and Deploy to Cloud Run
+        run: |
+          echo "Fetching secrets from Secret Manager..."
+
+          # Fetch secrets and export them as environment variables
+          export VITE_FIREBASE_API_KEY=$(gcloud secrets versions access latest --secret="VITE_FIREBASE_API_KEY")
+          export VITE_AUTH_DOMAIN=$(gcloud secrets versions access latest --secret="VITE_AUTH_DOMAIN")
+          export VITE_PROJECT_ID=$(gcloud secrets versions access latest --secret="VITE_PROJECT_ID")
+          export VITE_STORAGE_BUCKET=$(gcloud secrets versions access latest --secret="VITE_STORAGE_BUCKET")
+          export VITE_MESSAGING_SENDER_ID=$(gcloud secrets versions access latest --secret="VITE_MESSAGING_SENDER_ID")
+          export VITE_APP_ID=$(gcloud secrets versions access latest --secret="VITE_APP_ID")
+          export VITE_MEASUREMENT_ID=$(gcloud secrets versions access latest --secret="VITE_MEASUREMENT_ID")
+
+          # Deploy the app to Cloud Run with the secrets as environment variables
+          gcloud run deploy ziplay-new \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/ziplay-new \
+            --platform=managed \
+            --region=us-central1 \
+            --allow-unauthenticated \
+            --update-env-vars \
+              VITE_FIREBASE_API_KEY="$VITE_FIREBASE_API_KEY",\
+              VITE_AUTH_DOMAIN="$VITE_AUTH_DOMAIN",\
+              VITE_PROJECT_ID="$VITE_PROJECT_ID",\
+              VITE_STORAGE_BUCKET="$VITE_STORAGE_BUCKET",\
+              VITE_MESSAGING_SENDER_ID="$VITE_MESSAGING_SENDER_ID",\
+              VITE_APP_ID="$VITE_APP_ID",\
+              VITE_MEASUREMENT_ID="$VITE_MEASUREMENT_ID"
