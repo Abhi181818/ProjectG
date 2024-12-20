@@ -1,46 +1,46 @@
 steps:
   # Step 1: Build the Docker image with environment variables
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: "gcr.io/cloud-builders/docker"
     args:
-      - 'build'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/ziplay-new'
-      - '--build-arg'
-      - 'VITE_FIREBASE_API_KEY=$_VITE_FIREBASE_API_KEY'
-      - '--build-arg'
-      - 'VITE_AUTH_DOMAIN=$_VITE_AUTH_DOMAIN'
-      - '--build-arg'
-      - 'VITE_PROJECT_ID=$_VITE_PROJECT_ID'
-      - '--build-arg'
-      - 'VITE_STORAGE_BUCKET=$_VITE_STORAGE_BUCKET'
-      - '--build-arg'
-      - 'VITE_MESSAGING_SENDER_ID=$_VITE_MESSAGING_SENDER_ID'
-      - '--build-arg'
-      - 'VITE_APP_ID=$_VITE_APP_ID'
-      - '--build-arg'
-      - 'VITE_MEASUREMENT_ID=$_VITE_MEASUREMENT_ID'
-      - './Frontend'  # Specify frontend folder as context
+      - "build"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/ziplay-new"
+      - "--build-arg"
+      - "VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY"
+      - "--build-arg"
+      - "VITE_AUTH_DOMAIN=$VITE_AUTH_DOMAIN"
+      - "--build-arg"
+      - "VITE_PROJECT_ID=$VITE_PROJECT_ID"
+      - "--build-arg"
+      - "VITE_STORAGE_BUCKET=$VITE_STORAGE_BUCKET"
+      - "--build-arg"
+      - "VITE_MESSAGING_SENDER_ID=$VITE_MESSAGING_SENDER_ID"
+      - "--build-arg"
+      - "VITE_APP_ID=$VITE_APP_ID"
+      - "--build-arg"
+      - "VITE_MEASUREMENT_ID=$VITE_MEASUREMENT_ID"
+      - "./Frontend" # Specify frontend folder as context
 
   # Step 2: Push the Docker image to Google Container Registry
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: "gcr.io/cloud-builders/docker"
     args:
-      - 'push'
-      - 'gcr.io/$PROJECT_ID/ziplay-new'
+      - "push"
+      - "gcr.io/$PROJECT_ID/ziplay-new"
 
   # Step 3: Deploy the Docker image to Cloud Run
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     args:
-      - 'gcloud'
-      - 'run'
-      - 'deploy'
-      - 'ziplay-new'
-      - '--image'
-      - 'gcr.io/$PROJECT_ID/ziplay-new'
-      - '--platform'
-      - 'managed'
-      - '--region'
-      - 'us-central1'
-      - '--allow-unauthenticated'
+      - "gcloud"
+      - "run"
+      - "deploy"
+      - "ziplay-new"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/ziplay-new"
+      - "--platform"
+      - "managed"
+      - "--region"
+      - "us-central1"
+      - "--allow-unauthenticated"
 
 images:
-  - 'gcr.io/$PROJECT_ID/ziplay-new'
+  - "gcr.io/$PROJECT_ID/ziplay-new"
